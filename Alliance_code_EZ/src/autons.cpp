@@ -14,6 +14,7 @@ const int SWING_SPEED = 90;
 // Constants
 ///
 void default_constants() {
+  liftPID.exit_condition_set(100, 3, 500, 7, 500, 500);
   chassis.pid_heading_constants_set(11, 0, 20);
   chassis.pid_drive_constants_set(20, 0, 100);
   chassis.pid_turn_constants_set(3, 0.05, 20, 15);
@@ -187,28 +188,294 @@ void interfered_example() {
   chassis.pid_turn_set(90_deg, TURN_SPEED);
   chassis.pid_wait();
 }
-
-
-// Auto 15s
-void Auto15s() {
-  // move backward to grasp stake
-  chassis.pid_drive_set(-24_in, DRIVE_SPEED, true);
+void blue_left(){
+  lift_pneumatic.set(true);
+  mogo.set(false) // lift the piston -> nhả mogo
+  chassis.pid_drive_set(-32_in, DRIVE_SPEED);
   chassis.pid_wait();
-
-  // grab stake
-
-  // turn 135 degrees clockwise
-  chassis.pid_turn_set(135_deg, TURN_SPEED);
+  // move backward 5 inches and grasp the mobile goal
+  chassis.pid_drive_set(-5_in, DRIVE_SPEED);
+  mogo.set(true);
+  pros:: delay(300);
+  Conveyor(200);
+  pros::delay(800);
+  Conveyor(0);
+  Intake(200);
   chassis.pid_wait();
-
-  // move forward to grab rings
-  chassis.pid_drive_set(24_in, DRIVE_SPEED, true);
+  chassis.pid_turn_set(65,TURN_SPEED);
   chassis.pid_wait();
-  
-  //grab rings;
-  Intake(127);
-  pros::delay(200);
+  Conveyor(200);
+  chassis.pid_drive_set(35,TURN_SPEED);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-35_in, TURN_SPEED);
+  chassis.pid_wait();
+  chassis.pid_turn_set(180, TURN_SPEED);
   Intake(0);
+  Conveyor(0);
+  chassis.pid_wait();
+  ladybrown.move_relative(2000,150);
 
-  
+}
+void skill(){
+  // move forward 12 inches                    
+  chassis.pid_drive_set(9_in, DRIVE_SPEED, true); 
+  chassis.pid_wait_quick_chain();
+  // turn to 90 degrees counter-clockwise
+  chassis.pid_turn_set(-90_deg, TURN_SPEED); 
+  chassis.pid_wait_quick_chain();
+  // move backward 8 inches
+  chassis.pid_drive_set(-8_in, DRIVE_SPEED, true); 
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(-4_in, 80, true); 
+  chassis.pid_wait();
+  //grab stake and move backward 8 inches
+  mogo.set(true);
+  chassis.pid_drive_set(-8_in, DRIVE_SPEED, true); 
+  chassis.pid_wait_quick_chain();
+  //turn to 0 degrees 
+  chassis.pid_turn_set(0_deg, TURN_SPEED); 
+  chassis.pid_wait_quick_chain();
+  // move forward 18 inches and start intake and conveyor                           
+  chassis.pid_drive_set(22_in, DRIVE_SPEED, true); 
+  Intake(200); 
+  Conveyor(200);
+  chassis.pid_wait();
+  // turn to 90 degrees clockwise
+  chassis.pid_turn_set(90_deg, TURN_SPEED); 
+  chassis.pid_wait_quick_chain();
+  // move forward 40 inches
+  chassis.pid_drive_set(40_in, DRIVE_SPEED, true);//old 48
+  chassis.pid_wait();
+  // move backward 12 inches
+  chassis.pid_drive_set(-12_in, DRIVE_SPEED, true);  
+  chassis.pid_wait_quick_chain();
+  // turn to 180 degress clockwise 
+  chassis.pid_turn_set(180_deg, TURN_SPEED);
+  chassis.pid_wait_quick_chain();
+  // move forward 66 inches 
+  chassis.pid_drive_set(66_in, 80, true); 
+  chassis.pid_wait();
+  // move backward 24 inches
+  chassis.pid_drive_set(-15_in, DRIVE_SPEED, true); //old -15_in
+  chassis.pid_wait();
+  // turn to 45 degrees counter-clockwise and stop intake and conveyor
+  Intake(0);
+  Conveyor(0);
+  chassis.pid_turn_set(-45_deg, TURN_SPEED); 
+  chassis.pid_wait_quick_chain();
+  // move backward 30 inches and release stake 
+  chassis.pid_drive_set(-30_in, DRIVE_SPEED, true); 
+  mogo.set(false);
+  chassis.pid_wait_quick_chain();
+  // turn to 60 degrees counter-clockwise
+  chassis.pid_turn_set(-60_deg, TURN_SPEED); 
+  chassis.pid_wait_quick_chain();
+  // move forward 36 inches 
+  chassis.pid_drive_set(20_in, DRIVE_SPEED, true);// old 36
+  chassis.pid_wait_quick_chain();
+  // turn to 90 degrees clockwise
+  chassis.pid_turn_set(90_deg, TURN_SPEED);
+  chassis.pid_wait_quick_chain();
+
+  // move backward 48 inches 
+  chassis.pid_drive_set(-52_in, DRIVE_SPEED, true);// old -48
+  chassis.pid_wait_quick_chain();
+  //move backward 5 inches and grasp the mobile goal
+  chassis.pid_drive_set(-5_in, 90, true);
+  mogo.set(true);
+  chassis.pid_wait();
+  // turn to 90 degrees counter-clockwise
+  chassis.pid_turn_set(-90_deg, TURN_SPEED);// old -90_deg
+  chassis.pid_wait_quick_chain();
+  // move forward 72 inches and start intake and conveyor
+  Intake(200);
+  Conveyor(200);
+  chassis.pid_drive_set(72_in, DRIVE_SPEED, true); 
+  chassis.pid_wait();
+  // move backward 12 inches 
+  chassis.pid_drive_set(-3_in, DRIVE_SPEED, true); // old -12_in
+  chassis.pid_wait_quick_chain();
+  // turn to 20 degrees clockwise
+chassis.pid_turn_set(20_deg, TURN_SPEED);//old 20_deg
+  chassis.pid_wait_quick_chain();
+  // move forward 72 inches 
+  chassis.pid_drive_set(48_in, DRIVE_SPEED, true); //old 72_in
+  chassis.pid_wait(); // -> pause 
+  // move backward 90 inches and release stake
+  chassis.pid_drive_set(-90_in, DRIVE_SPEED - 20, true); 
+  chassis.pid_wait_quick_chain(); // Allows the program to continue running other tasks while checking if the PID controller has finished its task.
+  mogo.set(false);
+  // move forward 140 inches and stop conveyor
+  // -----end of section 1: the red half of playing field-------------------------
+  // when moving forward, (grab mogo) -> (ring intake) -> have to turn 180 degrees to grab mogo
+  chassis.pid_drive_set(140_in, DRIVE_SPEED, true); 
+  chassis.pid_wait(); // stop motor
+  Conveyor(0);
+  // turn to 135 degrees counter-clockwise
+  chassis.pid_turn_set(-135_deg, TURN_SPEED);
+  chassis.pid_wait_quick_chain();
+  // move backward 40 inches 
+  //
+  chassis.pid_drive_set(-40_in, DRIVE_SPEED, true); 
+  chassis.pid_wait();
+  //move backward 5 inches and grasp the mobile goal
+  chassis.pid_drive_set(-5_in, 90, true);
+  mogo.set(true);
+  chassis.pid_wait(); 
+  // turn to 75 degrees counter-clockwise
+  chassis.pid_turn_set(-75_deg, TURN_SPEED);
+  chassis.pid_wait_quick_chain();
+  // move backward 48 inches and release stake
+  chassis.pid_drive_set(-48_in, DRIVE_SPEED, true); 
+  Conveyor(200);
+  chassis.pid_wait();
+  mogo.set(false); // THẢ MOGO VÀO CORNER
+  // turn to 135 degrees clockwise
+  chassis.pid_turn_set(135_deg, TURN_SPEED);
+  chassis.pid_wait_quick_chain();
+  // move forward 70 inches and start conveyor
+  chassis.pid_drive_set(70_in, DRIVE_SPEED, true); 
+  Conveyor(200);
+  chassis.pid_wait();
+  Conveyor(0);
+  // turn to 135 degrees counter-clockwise
+  chassis.pid_turn_set(-135_deg, TURN_SPEED);
+  chassis.pid_wait_quick_chain();
+  // move backward 30 inches 
+  chassis.pid_drive_set(-30_in, DRIVE_SPEED, true); 
+  chassis.pid_wait();
+  //move backward 5 inches and grasp the mobile goal
+  chassis.pid_drive_set(-5_in, 90, true);
+  mogo.set(true);
+  chassis.pid_wait();
+  // move backward 5 inches 
+  chassis.pid_drive_set(-5_in, DRIVE_SPEED, true); 
+  chassis.pid_wait_quick_chain();
+  // turn to 135 degrees clockwise
+  chassis.pid_turn_set(135_deg, TURN_SPEED);
+  chassis.pid_wait_quick_chain();
+  // move forward 36 inches 
+  chassis.pid_drive_set(36_in, DRIVE_SPEED, true); 
+  Conveyor(200);
+  chassis.pid_wait();
+  // turn to 135 degrees clockwise
+  Intake(0);
+  Conveyor(0);
+  chassis.pid_turn_set(-135_deg, TURN_SPEED);
+  chassis.pid_wait_quick_chain();
+  // move backward 72 inches 
+  chassis.pid_drive_set(-72_in, DRIVE_SPEED, true); 
+  chassis.pid_wait();
+}
+//---------------eND Of ver 1-------------------------
+// CODE ĐÃ TUNE GÓC BUỔI SÁNG
+void skill()
+{
+  // move forward 12 inches                    
+  chassis.pid_drive_set(9_in, DRIVE_SPEED, true); 
+  chassis.pid_wait_quick_chain();
+  // turn to 90 degrees counter-clockwise
+  chassis.pid_turn_set(-90_deg, TURN_SPEED); 
+  chassis.pid_wait_quick_chain();
+  // move backward 8 inches
+  chassis.pid_drive_set(-8_in, DRIVE_SPEED, true); 
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(-4_in, 80, true); 
+  chassis.pid_wait();
+  //grab stake and move backward 8 inches
+  mogo.set(true);
+  chassis.pid_drive_set(-8_in, DRIVE_SPEED, true); 
+  chassis.pid_wait_quick_chain();
+  //turn to 0 degrees 
+  chassis.pid_turn_set(0_deg, TURN_SPEED); 
+  chassis.pid_wait_quick_chain();
+  // move forward 18 inches and start intake and conveyor                           
+  chassis.pid_drive_set(22_in, DRIVE_SPEED, true); 
+  Intake(200); 
+  Conveyor(200);
+  chassis.pid_wait();
+  // turn to 90 degrees clockwise
+  chassis.pid_turn_set(90_deg, TURN_SPEED); 
+  chassis.pid_wait_quick_chain();
+  // move forward 40 inches
+  chassis.pid_drive_set(40_in, DRIVE_SPEED, true); //old 48
+  chassis.pid_wait();
+  // move backward 12 inches
+  chassis.pid_drive_set(-12_in, DRIVE_SPEED, true);  
+  chassis.pid_wait_quick_chain();
+  // turn to 180 degress clockwise 
+  chassis.pid_turn_set(180_deg, TURN_SPEED);
+  chassis.pid_wait_quick_chain();
+  // move forward 66 inches 
+  chassis.pid_drive_set(66_in, 80, true); 
+  chassis.pid_wait();
+  // move backward 24 inches
+  chassis.pid_drive_set(-15_in, DRIVE_SPEED, true); //old -15_in
+  chassis.pid_wait();
+  // turn to 45 degrees counter-clockwise and stop intake and conveyor
+  Intake(0);
+  Conveyor(0);
+  chassis.pid_turn_set(-45_deg, TURN_SPEED); 
+  chassis.pid_wait_quick_chain();
+  // move backward 30 inches and release stake 
+  chassis.pid_drive_set(-20_in, DRIVE_SPEED, true); ///////// change to 20 inch
+  mogo.set(false);
+  chassis.pid_wait_quick_chain();
+  // turn to 60 degrees counter-clockwise
+  chassis.pid_turn_set(-60_deg, TURN_SPEED); 
+  chassis.pid_wait_quick_chain();
+  // move forward 36 inches 
+  chassis.pid_drive_set(20_in, DRIVE_SPEED, true);// old 36      ///////////// change to 21 inch
+  chassis.pid_wait_quick_chain();
+  // turn to 90 degrees clockwise
+  chassis.pid_turn_set(90_deg, TURN_SPEED);
+  chassis.pid_wait_quick_chain();
+
+  // move backward 48 inches 
+  chassis.pid_drive_set(-50_in, DRIVE_SPEED, true);// old -48
+  chassis.pid_wait_quick_chain();
+  //move backward 5 inches and grasp the mobile goal
+  chassis.pid_drive_set(-5_in, 90, true);
+  mogo.set(true);
+  chassis.pid_wait();
+  // turn to 90 degrees counter-clockwise
+  chassis.pid_turn_set(-90_deg, TURN_SPEED);// old -90_deg
+  chassis.pid_wait_quick_chain();
+  // move forward 72 inches and start intake and conveyor
+  Intake(200);
+  Conveyor(200);
+  chassis.pid_drive_set(72_in, DRIVE_SPEED, true); 
+  chassis.pid_wait();
+  // move backward 12 inches
+  chassis.pid_drive_set(-3_in, DRIVE_SPEED, true); // old -12_in
+  chassis.pid_wait_quick_chain();
+  // turn to 20 degrees clockwise
+  chassis.pid_turn_set(20_deg, TURN_SPEED);//old 20_deg
+  chassis.pid_wait_quick_chain();
+  // move forward 72 inches 
+  chassis.pid_drive_set(48_in, DRIVE_SPEED, true); //old 72_in
+  chassis.pid_wait();
+  // move backward 90 inches and release stake
+  chassis.pid_drive_set(-90_in, DRIVE_SPEED - 20, true);    /////////////// change to 86
+  chassis.pid_wait_quick_chain();
+  mogo.set(false);
+
+
+  // move forward inches and stop conveyor
+  Conveyor(0);
+  Intake(0);
+  chassis.pid_drive_set(5_in, DRIVE_SPEED);
+  chassis.pid_wait();
+  chassis.pid_turn_set(28_deg, TURN_SPEED);
+  chassis.pid_wait();
+  chassis.pid_drive_set(120_in, DRIVE_SPEED);
+  chassis.pid_wait();
+  chassis.pid_turn_set(-85, TURN_SPEED);
+  chassis.pid_wait();
+  chassis.pid_drive_set(45_in, DRIVE_SPEED);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_turn_set(-90_deg, TURN_SPEED);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-120_in, DRIVE_SPEED);
+  chassis.pid_wait();
 }
