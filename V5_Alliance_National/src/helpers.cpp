@@ -32,7 +32,7 @@ void liftTask(){
     while (true) {
         if (controlled_by_pid)
         {
-            Ladybrown(liftPID.compute(ladybrown.get_position()));
+            Ladybrown(liftPID.compute(rotation_sensor.get_position()));
             pros::delay(ez::util::DELAY_TIME);
         }
 

@@ -253,10 +253,10 @@ void opcontrol() {
 
     // ladybrown
     if(master.get_digital(DIGITAL_LEFT)){
-      liftPID.target_set(300);
+      liftPID.target_set(3000);
     } 
     else {
-      if (ladybrown.get_position()>1800)
+      if (rotation_sensor.get_position()>18000)
       Ladybrown((-master.get_digital(DIGITAL_DOWN))*180);  
       else Ladybrown((master.get_digital(DIGITAL_UP) - master.get_digital(DIGITAL_DOWN))*180);
     }
