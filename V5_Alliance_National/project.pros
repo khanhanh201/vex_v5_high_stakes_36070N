@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "alliance test",
+    "project_name": "huyanh 2",
     "target": "v5",
     "templates": {
       "EZ-Template": {
@@ -425,7 +425,8 @@
     },
     "upload_options": {
       "description": "roboticsisez.com",
-      "slot": 2
+      "slot": 7,
+      "icon": "ufo"
     },
     "use_early_access": false
   }

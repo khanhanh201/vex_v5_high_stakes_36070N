@@ -18,29 +18,6 @@ void Ladybrown (int ladybrown_power) {
     ladybrown.move_velocity(ladybrown_power);  
 }
 
-ez::PID liftPID{0.45, 0.05, 0, 0, "Lift"};
-
-void liftWait(){
-    while (liftPID.exit_condition(ladybrown, true) == ez::RUNNING) {
-        pros::delay(ez::util::DELAY_TIME);
-    }
-}
-
-void liftTask(){
-    pros::delay(2000);
-    bool controlled_by_pid = false;
-    while (true) {
-        if (controlled_by_pid)
-        {
-            Ladybrown(liftPID.compute(rotation_sensor.get_position()));
-            pros::delay(ez::util::DELAY_TIME);
-        }
-
-        if (master.get_digital_new_press(DIGITAL_LEFT)) controlled_by_pid = true;
-        if (master.get_digital_new_press(DIGITAL_UP) || master.get_digital(DIGITAL_DOWN)) controlled_by_pid = false;
-    }
-}
-
 // mogo 
 // true = grasp
 // false = release   

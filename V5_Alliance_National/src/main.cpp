@@ -1,5 +1,8 @@
 #include "main.h"
 
+//ladybrown
+#define ladybrown_angle 16.5
+
 /////
 // For installation, upgrading, documentations, and tutorials, check out our website!
 // https://ez-robotics.github.io/EZ-Template/
@@ -22,7 +25,58 @@ ez::Drive chassis(
 // ez::tracking_wheel left_tracker(1, {'C', 'D'}, 2.75, 4.0);  // ADI Encoders plugged into a Smart port
 // ez::tracking_wheel horiz_tracker(1, 2.75, 4.0);             // Rotation sensors
 
-pros::Task Lift_Task(liftTask);
+bool manual_ladybrown = true;
+
+void display_task()
+{
+  while (true)
+  {
+    pros::lcd::set_text(3, std::to_string((double)(rotation_sensor.get_position())/100));
+    pros::lcd::set_text(5, std::to_string(manual_ladybrown));
+    pros::delay(ez::util::DELAY_TIME);
+  }
+}
+
+pros::Task Display_Task(display_task);
+
+my_custom_PID ladybrown_PID(5, 0, 10);
+double rotation_error;
+int rotation_count;
+
+void ladybrown_move_PID(float target)
+{
+  pros::lcd::set_text(4, "not done");
+	bool move_done = false;
+  rotation_count = 0;
+	ladybrown_PID.reset();
+
+	while (!move_done)
+	{
+		rotation_error = target - ((double)(rotation_sensor.get_position())/100);
+		ladybrown.move_velocity(ladybrown_PID.update(rotation_error));
+
+		if (std::abs(rotation_error) < 1) move_done = true;
+
+		pros::delay(ez::util::DELAY_TIME);
+	}
+  pros::lcd::set_text(4, "done");
+  ladybrown.brake();
+	ladybrown_PID.reset();
+  manual_ladybrown = true;
+}
+
+void ladybrown_task()
+{
+  while (true)
+  {
+    if (!manual_ladybrown && std::abs(ladybrown_angle - ((double)(rotation_sensor.get_position())/100)) > 1)
+    {
+      ladybrown_move_PID(ladybrown_angle);
+    }
+    pros::delay(ez::util::DELAY_TIME);
+  }
+}
+pros::Task Ladybrown_Task(ladybrown_task);
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -44,7 +98,7 @@ void initialize() {
   // Configure your chassis controls
   chassis.opcontrol_curve_buttons_toggle(false);   // Enables modifying the controller curve with buttons on the joysticks
   chassis.opcontrol_drive_activebrake_set(2.0);   // Sets the active brake kP. We recommend ~2.  0 will disable.
-  chassis.opcontrol_curve_default_set(2.1, 4.3);  // Defaults for curve. If using tank, only the first parameter is used. (Comment this line out if you have an SD card!)
+  chassis.opcontrol_curve_default_set(2.1, 4);  // Defaults for curve. If using tank, only the first parameter is used. (Comment this line out if you have an SD card!)
 
   // Set the drive to your own constants from autons.cpp!
   default_constants();
@@ -71,7 +125,9 @@ void initialize() {
   ez::as::initialize();
 
   ladybrown.tare_position();
-  rotation_sensor.reset();
+  ladybrown.set_encoder_units(MOTOR_ENCODER_DEGREES);
+  rotation_sensor.reset_position();
+  rotation_sensor.set_reversed(true);
 
   master.rumble(chassis.drive_imu_calibrated() ? "." : "---");
 }
@@ -235,6 +291,7 @@ void ez_template_extras() {
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
+
 void opcontrol() {
   // This is preference to what you like to drive on
   chassis.drive_brake_set(MOTOR_BRAKE_COAST);
@@ -242,7 +299,7 @@ void opcontrol() {
 
   while (true) {
     // Gives you some extras to make EZ-Template ezier
-    ez_template_extras();
+    //ez_template_extras();
 
     chassis.opcontrol_arcade_standard(ez::SPLIT);   // Standard split arcade
 
@@ -252,14 +309,19 @@ void opcontrol() {
     Intake_Conveyor((master.get_digital(DIGITAL_L1) - master.get_digital(DIGITAL_L2))*200);
 
     // ladybrown
-    if(master.get_digital(DIGITAL_LEFT)){
-      liftPID.target_set(3000);
-    } 
-    else {
-      if (rotation_sensor.get_position()>18000)
-      Ladybrown((-master.get_digital(DIGITAL_DOWN))*180);  
-      else Ladybrown((master.get_digital(DIGITAL_UP) - master.get_digital(DIGITAL_DOWN))*180);
+
+    if(master.get_digital(DIGITAL_LEFT)) manual_ladybrown = false;
+    if(master.get_digital(DIGITAL_UP) || master.get_digital(DIGITAL_DOWN)) manual_ladybrown = true;
+
+    if (manual_ladybrown) 
+    {
+      if (((double)(rotation_sensor.get_position())/100) > 150) Ladybrown(master.get_digital(DIGITAL_DOWN)*(-200));
+      else
+      {
+        Ladybrown((master.get_digital(DIGITAL_UP) - master.get_digital(DIGITAL_DOWN))*200);
+      }
     }
+
     // mogo
     Mogo(master.get_digital(DIGITAL_X));
 

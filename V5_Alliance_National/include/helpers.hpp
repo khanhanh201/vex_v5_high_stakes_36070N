@@ -23,7 +23,3 @@ void Lift (bool check);
 extern ez::Piston doinker_pneumatic;
 void Doinker (bool check);
 
-// ladybrown auto
-extern ez::PID liftPID;
-void liftWait();
-void liftTask();
