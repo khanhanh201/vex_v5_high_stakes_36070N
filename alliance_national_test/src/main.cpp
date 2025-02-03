@@ -3,12 +3,11 @@
 //ladybrown macros
 #define ladybrown_angle 17.5
 #define ladybrown_deadband 0.1
-#define ladybrown_time_count 5
+#define ladybrown_time_count 4
 
-//PID
-#define my_kP 4
-#define my_kI 0
-#define my_kD 0.5
+//Vision
+#define color_detect 1 //1: blue, 2:red
+
 
 
 // Chassis constructor
@@ -23,7 +22,7 @@ ez::Drive chassis(
 
 
 
-my_custom_PID ladybrown_PID(my_kP, my_kI, my_kD);
+my_custom_PID ladybrown_PID(6, 0, 1);
 double rotation_error;
 int rotation_count;
 bool manual_ladybrown = true;
@@ -68,13 +67,43 @@ void ladybrown_task()
 pros::Task Ladybrown_Task(ladybrown_task);
 
 
+int direction = 1;
+void vision_task()
+{
+  pros::delay(ez::util::DELAY_TIME);
+  pros::vision_signature_s_t blue_signature = pros::Vision::signature_from_utility(1, -3863, -3307, -3585, 5689, 8119, 6904, 4.200, 0);
+	pros::vision_signature_s_t red_signature = pros::Vision::signature_from_utility(2, 8629, 12603, 10616, -2185, -1329, -1757, 5.500, 0);
+	vision_sensor.set_signature(1, &blue_signature);
+	vision_sensor.set_signature(2, &red_signature);
+	pros::vision_object_s_t largest_object;
+  
+  while (true)
+  {
+    largest_object = vision_sensor.get_by_sig(0, color_detect); //blue_signature
+
+		if (vision_sensor.get_object_count() > 0 && largest_object.width >= 250 && largest_object.height >= 190 && intake_motor.get_actual_velocity() > 1)
+		{
+			direction = direction * (-1);
+			pros::delay(120);
+			direction = direction * (-1);
+			pros::delay(500);
+		}
+
+		pros::delay(ez::util::DELAY_TIME);
+  }
+  
+}
+pros::Task my_Vision_Task(vision_task);
+
 void display_task()
 {
   while (true)
   {
     pros::lcd::set_text(3, std::to_string((double)(rotation_sensor.get_position())/100));
     pros::lcd::set_text(5, std::to_string(manual_ladybrown));
-    pros::lcd::print(6, "PID constants: %d %d %d", my_kP, my_kI, my_kD);
+    if (color_detect == 1) pros::lcd::set_text(6, "color detected: blue");
+    if (color_detect == 2) pros::lcd::set_text(6, "color detected: red");
+    pros::lcd::set_text(7, std::to_string(intake_motor.get_actual_velocity()));
     pros::delay(ez::util::DELAY_TIME);
   }
 }
@@ -89,9 +118,6 @@ pros::Task Display_Task(display_task);
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-  // Print our branding over your terminal :D
-  ez::ez_template_print();
-
   pros::delay(500);  // Stop the user from doing anything while legacy ports configure
 
   // Configure your chassis controls
@@ -122,7 +148,7 @@ void initialize() {
   ladybrown.tare_position();
   ladybrown.set_encoder_units(MOTOR_ENCODER_DEGREES);
   rotation_sensor.reset_position();
-  rotation_sensor.set_reversed(false);
+  rotation_sensor.set_reversed(true);
 
   master.rumble(chassis.drive_imu_calibrated() ? "." : "---");
 }
@@ -212,7 +238,7 @@ void opcontrol() {
       if (((double)(rotation_sensor.get_position())/100) > 150) Ladybrown(master.get_digital(DIGITAL_DOWN)*(-200));
       else
       {
-        Ladybrown((master.get_digital(DIGITAL_UP) - master.get_digital(DIGITAL_DOWN))*200);
+        Ladybrown((master.get_digital(DIGITAL_UP) - master.get_digital(DIGITAL_DOWN))*200*direction);
       }
     }
 

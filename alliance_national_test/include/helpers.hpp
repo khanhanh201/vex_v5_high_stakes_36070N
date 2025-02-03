@@ -3,6 +3,9 @@
 //rotation
 extern pros::Rotation rotation_sensor;
 
+//vision
+extern pros::Vision vision_sensor;
+
 //intake & conveyor
 extern pros::MotorGroup intake_motor;
 void Intake_Conveyor(int intake_power);
