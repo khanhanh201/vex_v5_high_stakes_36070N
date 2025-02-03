@@ -1,14 +1,15 @@
 #include "main.h"
 
 //ladybrown macros
-#define ladybrown_angle 16.5
-#define ladybrown_deadband 0.2
-#define ladybrown_time_count 3
+#define ladybrown_angle 17.5
+#define ladybrown_deadband 0.1
+#define ladybrown_time_count 5
 
-/////
-// For installation, upgrading, documentations, and tutorials, check out our website!
-// https://ez-robotics.github.io/EZ-Template/
-/////
+//PID
+#define my_kP 4
+#define my_kI 0
+#define my_kD 0.5
+
 
 // Chassis constructor
 ez::Drive chassis(
@@ -20,16 +21,9 @@ ez::Drive chassis(
     4.125,  // Wheel Diameter (Remember, 4" wheels without screw holes are actually 4.125!)
     280);   // Wheel RPM = cartridge * (motor gear / wheel gear)
 
-// Are you using tracking wheels?  Comment out which ones you're using here!
-//  `2.75` is the wheel diameter
-//  `4.0` is the distance from the center of the wheel to the center of the robot
-// ez::tracking_wheel right_tracker({-'A', -'B'}, 2.75, 4.0);  // ADI Encoders
-// ez::tracking_wheel left_tracker(1, {'C', 'D'}, 2.75, 4.0);  // ADI Encoders plugged into a Smart port
-// ez::tracking_wheel horiz_tracker(1, 2.75, 4.0);             // Rotation sensors
 
 
-
-my_custom_PID ladybrown_PID(5, 0, 10);
+my_custom_PID ladybrown_PID(my_kP, my_kI, my_kD);
 double rotation_error;
 int rotation_count;
 bool manual_ladybrown = true;
@@ -46,6 +40,8 @@ void ladybrown_move_PID(float target)
 		rotation_error = target - ((double)(rotation_sensor.get_position())/100);
 		ladybrown.move_velocity(ladybrown_PID.update(rotation_error));
 
+    if(master.get_digital(DIGITAL_UP) || master.get_digital(DIGITAL_DOWN)) move_done = true;
+
 		if (std::abs(rotation_error) < ladybrown_deadband) rotation_count++;
     if (rotation_count >= ladybrown_time_count) move_done = true;
 
@@ -59,9 +55,10 @@ void ladybrown_move_PID(float target)
 
 void ladybrown_task()
 {
+  ladybrown.set_brake_mode(MOTOR_BRAKE_BRAKE);
   while (true)
   {
-    if (!manual_ladybrown && std::abs(ladybrown_angle - ((double)(rotation_sensor.get_position())/100)) > 1)
+    if (!manual_ladybrown)
     {
       ladybrown_move_PID(ladybrown_angle);
     }
@@ -77,6 +74,7 @@ void display_task()
   {
     pros::lcd::set_text(3, std::to_string((double)(rotation_sensor.get_position())/100));
     pros::lcd::set_text(5, std::to_string(manual_ladybrown));
+    pros::lcd::print(6, "PID constants: %d %d %d", my_kP, my_kI, my_kD);
     pros::delay(ez::util::DELAY_TIME);
   }
 }
@@ -96,11 +94,6 @@ void initialize() {
 
   pros::delay(500);  // Stop the user from doing anything while legacy ports configure
 
-  // Are you using tracking wheels?  Comment out which ones you're using here!
-  // chassis.odom_tracker_right_set(&right_tracker);
-  // chassis.odom_tracker_left_set(&left_tracker);
-  // chassis.odom_tracker_back_set(&horiz_tracker);  // Replace `back` to `front` if your tracker is in the front!
-
   // Configure your chassis controls
   chassis.opcontrol_curve_buttons_toggle(false);   // Enables modifying the controller curve with buttons on the joysticks
   chassis.opcontrol_drive_activebrake_set(2.0);   // Sets the active brake kP. We recommend ~2.  0 will disable.
@@ -108,10 +101,6 @@ void initialize() {
 
   // Set the drive to your own constants from autons.cpp!
   default_constants();
-
-  // These are already defaulted to these buttons, but you can change the left/right curve buttons here!
-  // chassis.opcontrol_curve_buttons_left_set(pros::E_CONTROLLER_DIGITAL_LEFT, pros::E_CONTROLLER_DIGITAL_RIGHT);  // If using tank, only the left side is used.
-  // chassis.opcontrol_curve_buttons_right_set(pros::E_CONTROLLER_DIGITAL_Y, pros::E_CONTROLLER_DIGITAL_A);
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.autons_add({
@@ -133,7 +122,7 @@ void initialize() {
   ladybrown.tare_position();
   ladybrown.set_encoder_units(MOTOR_ENCODER_DEGREES);
   rotation_sensor.reset_position();
-  rotation_sensor.set_reversed(true);
+  rotation_sensor.set_reversed(false);
 
   master.rumble(chassis.drive_imu_calibrated() ? "." : "---");
 }
@@ -178,111 +167,10 @@ void autonomous() {
   chassis.odom_xyt_set(0_in, 0_in, 0_deg);    // Set the current position, you can start at a specific position with this
   chassis.drive_brake_set(MOTOR_BRAKE_HOLD);  // Set motors to hold.  This helps autonomous consistency
 
-  /*
-  Odometry and Pure Pursuit are not magic
-
-  It is possible to get perfectly consistent results without tracking wheels,
-  but it is also possible to have extremely inconsistent results without tracking wheels.
-  When you don't use tracking wheels, you need to:
-   - avoid wheel slip
-   - avoid wheelies
-   - avoid throwing momentum around (super harsh turns, like in the example below)
-  You can do cool curved motions, but you have to give your robot the best chance
-  to be consistent
-  */
-
   ez::as::auton_selector.selected_auton_call();  // Calls selected auton from autonomous selector
 }
 
-/**
- * Simplifies printing tracker values to the brain screen
- */
-void screen_print_tracker(ez::tracking_wheel *tracker, std::string name, int line) {
-  std::string tracker_value = "", tracker_width = "";
-  // Check if the tracker exists
-  if (tracker != nullptr) {
-    tracker_value = name + " tracker: " + util::to_string_with_precision(tracker->get());             // Make text for the tracker value
-    tracker_width = "  width: " + util::to_string_with_precision(tracker->distance_to_center_get());  // Make text for the distance to center
-  }
-  ez::screen_print(tracker_value + tracker_width, line);  // Print final tracker text
-}
 
-/**
- * Ez screen task
- * Adding new pages here will let you view them during user control or autonomous
- * and will help you debug problems you're having
- */
-void ez_screen_task() {
-  while (true) {
-    // Only run this when not connected to a competition switch
-    if (!pros::competition::is_connected()) {
-      // Blank page for odom debugging
-      if (chassis.odom_enabled() && !chassis.pid_tuner_enabled()) {
-        // If we're on the first blank page...
-        if (ez::as::page_blank_is_on(0)) {
-          // Display X, Y, and Theta
-          ez::screen_print("x: " + util::to_string_with_precision(chassis.odom_x_get()) +
-                               "\ny: " + util::to_string_with_precision(chassis.odom_y_get()) +
-                               "\na: " + util::to_string_with_precision(chassis.odom_theta_get()),
-                           1);  // Don't override the top Page line
-
-          // Display all trackers that are being used
-          screen_print_tracker(chassis.odom_tracker_left, "l", 4);
-          screen_print_tracker(chassis.odom_tracker_right, "r", 5);
-          screen_print_tracker(chassis.odom_tracker_back, "b", 6);
-          screen_print_tracker(chassis.odom_tracker_front, "f", 7);
-        }
-      }
-    }
-
-    // Remove all blank pages when connected to a comp switch
-    else {
-      if (ez::as::page_blank_amount() > 0)
-        ez::as::page_blank_remove_all();
-    }
-
-    pros::delay(ez::util::DELAY_TIME);
-  }
-}
-pros::Task ezScreenTask(ez_screen_task);
-
-/**
- * Gives you some extras to run in your opcontrol:
- * - run your autonomous routine in opcontrol by pressing DOWN and B
- *   - to prevent this from accidentally happening at a competition, this
- *     is only enabled when you're not connected to competition control.
- * - gives you a GUI to change your PID values live by pressing X
- */
-void ez_template_extras() {
-  // Only run this when not connected to a competition switch
-  if (!pros::competition::is_connected()) {
-    // PID Tuner
-    // - after you find values that you're happy with, you'll have to set them in auton.cpp
-
-    // Enable / Disable PID Tuner
-    //  When enabled:
-    //  * use A and Y to increment / decrement the constants
-    //  * use the arrow keys to navigate the constants
-    if (master.get_digital_new_press(DIGITAL_X))
-      chassis.pid_tuner_toggle();
-
-    // Trigger the selected autonomous routine
-    if (master.get_digital(DIGITAL_B) && master.get_digital(DIGITAL_DOWN)) {
-      pros::motor_brake_mode_e_t preference = chassis.drive_brake_get();
-      autonomous();
-      chassis.drive_brake_set(preference);
-    }
-
-    // Allow PID Tuner to iterate
-    chassis.pid_tuner_iterate();
-  }
-
-  // Disable PID Tuner when connected to a comp switch
-  else {
-    if (chassis.pid_tuner_enabled())
-      chassis.pid_tuner_disable();
-  }
-}
 
 /**
  * Runs the operator control code. This function will be started in its own task

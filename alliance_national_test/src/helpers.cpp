@@ -12,7 +12,7 @@ void Intake_Conveyor (int intake_power) {
 
 
 // ladybrown 
-pros::Motor ladybrown (-6, pros::v5::MotorGears::green);
+pros::Motor ladybrown (6, pros::v5::MotorGears::green);
 
 void Ladybrown (int ladybrown_power) {
     ladybrown.move_velocity(ladybrown_power);  
@@ -20,7 +20,7 @@ void Ladybrown (int ladybrown_power) {
 
 // mogo 
 // true = grasp
-// false = release   
+// false = release
 ez::Piston mogo('C', false);
 
 void Mogo (bool check) {
