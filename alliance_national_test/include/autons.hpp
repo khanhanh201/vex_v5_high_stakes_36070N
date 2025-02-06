@@ -16,3 +16,4 @@ void positive_red();
 void positive_blue();
 
 void test_ACE();
+void my_test();

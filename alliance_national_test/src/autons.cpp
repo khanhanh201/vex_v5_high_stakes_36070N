@@ -237,7 +237,7 @@ void negative_red() {
 
   //Step 2
   chassis.pid_turn_set(-120_deg, 90);
-  chassis.pid_wait_quick_chain();
+  chassis.pid_wait();
   chassis.pid_drive_set(-25_in, 110);
   chassis.pid_wait_quick_chain();
   chassis.pid_drive_set(-7_in, 90);
@@ -247,7 +247,7 @@ void negative_red() {
 
   //Step 3
   chassis.pid_turn_set(45_deg, 90);
-  chassis.pid_wait_quick_chain();
+  chassis.pid_wait();
   chassis.pid_drive_set(25_in, 110);
   chassis.pid_wait_quick_chain();
   chassis.pid_drive_set(5_in, 90);
@@ -319,6 +319,28 @@ void test_ACE() {
   pros::delay(800);
   Intake_Conveyor(0);
   }
+
+void my_test()
+{
+  chassis.pid_turn_set(90_deg, 110);
+  chassis.pid_wait();
+  pros::delay(500);
+  chassis.pid_turn_set(180_deg, 110);
+  chassis.pid_wait();
+  pros::delay(500);
+  chassis.pid_turn_set(270_deg, 110);
+  chassis.pid_wait();
+  pros::delay(500);
+  chassis.pid_turn_set(0_deg, 110);
+  chassis.pid_wait();
+  pros::delay(500);
+  chassis.pid_drive_set(60_in, 110);
+  chassis.pid_wait();
+  pros::delay(500);
+  chassis.pid_drive_set(-60_in, 110);
+  chassis.pid_wait();
+}
+
 
 /* Version 2
 void negative_red(){
