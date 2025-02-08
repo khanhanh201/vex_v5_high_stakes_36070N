@@ -6,9 +6,10 @@
 /////
 
 // These are out of 127
-const int DRIVE_SPEED = 110;
+const int DRIVE_SPEED_1 = 120;
 const int TURN_SPEED = 90;
 const int SWING_SPEED = 110;
+const int DRIVE_SPEED_2 = 90;
 
 ///
 // Constants
@@ -75,7 +76,7 @@ void tug(int attempts) {
 // If there is no interference, the robot will drive forward and turn 90 degrees.
 // If interfered, the robot will drive forward and then attempt to drive backward.
 void interfered_example() {
-  chassis.pid_drive_set(24_in, DRIVE_SPEED, true);
+  chassis.pid_drive_set(24_in, DRIVE_SPEED_1, true);
   chassis.pid_wait();
 
   if (chassis.interfered) {
@@ -95,13 +96,13 @@ void odom_drive_example() {
   // You can replace pid_drive_set with pid_odom_set and your robot will
   // have better error correction.
 
-  chassis.pid_odom_set(24_in, DRIVE_SPEED, true);
+  chassis.pid_odom_set(24_in, DRIVE_SPEED_1, true);
   chassis.pid_wait();
 
-  chassis.pid_odom_set(-12_in, DRIVE_SPEED);
+  chassis.pid_odom_set(-12_in, DRIVE_SPEED_1);
   chassis.pid_wait();
 
-  chassis.pid_odom_set(-12_in, DRIVE_SPEED);
+  chassis.pid_odom_set(-12_in, DRIVE_SPEED_1);
   chassis.pid_wait();
 }
 
@@ -110,14 +111,14 @@ void odom_drive_example() {
 ///
 void odom_pure_pursuit_example() {
   // Drive to 0, 30 and pass through 6, 10 and 0, 20 on the way, with slew
-  chassis.pid_odom_set({{{6_in, 10_in}, fwd, DRIVE_SPEED},
-                        {{0_in, 20_in}, fwd, DRIVE_SPEED},
-                        {{0_in, 30_in}, fwd, DRIVE_SPEED}},
+  chassis.pid_odom_set({{{6_in, 10_in}, fwd, DRIVE_SPEED_1},
+                        {{0_in, 20_in}, fwd, DRIVE_SPEED_1},
+                        {{0_in, 30_in}, fwd, DRIVE_SPEED_1}},
                        true);
   chassis.pid_wait();
 
   // Drive to 0, 0 backwards
-  chassis.pid_odom_set({{0_in, 0_in}, rev, DRIVE_SPEED},
+  chassis.pid_odom_set({{0_in, 0_in}, rev, DRIVE_SPEED_1},
                        true);
   chassis.pid_wait();
 }
@@ -126,9 +127,9 @@ void odom_pure_pursuit_example() {
 // Odom Pure Pursuit Wait Until
 ///
 void odom_pure_pursuit_wait_until_example() {
-  chassis.pid_odom_set({{{0_in, 24_in}, fwd, DRIVE_SPEED},
-                        {{12_in, 24_in}, fwd, DRIVE_SPEED},
-                        {{24_in, 24_in}, fwd, DRIVE_SPEED}},
+  chassis.pid_odom_set({{{0_in, 24_in}, fwd, DRIVE_SPEED_1},
+                        {{12_in, 24_in}, fwd, DRIVE_SPEED_1},
+                        {{24_in, 24_in}, fwd, DRIVE_SPEED_1}},
                        true);
   chassis.pid_wait_until_index(1);  // Waits until the robot passes 12, 24
   // Intake.move(127);  // Set your intake to start moving once it passes through the second point in the index
@@ -140,11 +141,11 @@ void odom_pure_pursuit_wait_until_example() {
 // Odom Boomerang
 ///
 void odom_boomerang_example() {
-  chassis.pid_odom_set({{0_in, 24_in, 45_deg}, fwd, DRIVE_SPEED},
+  chassis.pid_odom_set({{0_in, 24_in, 45_deg}, fwd, DRIVE_SPEED_1},
                        true);
   chassis.pid_wait();
 
-  chassis.pid_odom_set({{0_in, 0_in, 0_deg}, rev, DRIVE_SPEED},
+  chassis.pid_odom_set({{0_in, 0_in, 0_deg}, rev, DRIVE_SPEED_1},
                        true);
   chassis.pid_wait();
 }
@@ -153,13 +154,13 @@ void odom_boomerang_example() {
 // Odom Boomerang Injected Pure Pursuit
 ///
 void odom_boomerang_injected_pure_pursuit_example() {
-  chassis.pid_odom_set({{{0_in, 24_in, 45_deg}, fwd, DRIVE_SPEED},
-                        {{12_in, 24_in}, fwd, DRIVE_SPEED},
-                        {{24_in, 24_in}, fwd, DRIVE_SPEED}},
+  chassis.pid_odom_set({{{0_in, 24_in, 45_deg}, fwd, DRIVE_SPEED_1},
+                        {{12_in, 24_in}, fwd, DRIVE_SPEED_1},
+                        {{24_in, 24_in}, fwd, DRIVE_SPEED_1}},
                        true);
   chassis.pid_wait();
 
-  chassis.pid_odom_set({{0_in, 0_in, 0_deg}, rev, DRIVE_SPEED},
+  chassis.pid_odom_set({{0_in, 0_in, 0_deg}, rev, DRIVE_SPEED_1},
                        true);
   chassis.pid_wait();
 }
@@ -364,3 +365,352 @@ void negative_red(){
   pros::delay(1000);
   Intake_Conveyor(0);
 }*/
+
+
+/*
+void Auto15s() {
+  // move backward to grasp stake
+  chassis.pid_drive_set(-24_in, DRIVE_SPEED_1, true);
+  chassis.pid_wait();
+
+  // grab stake
+
+  // turn 135 degrees clockwise
+  chassis.pid_turn_set(135_deg, TURN_SPEED);
+  chassis.pid_wait();
+
+  // move forward to grab rings
+  chassis.pid_drive_set(24_in, DRIVE_SPEED_1, true);
+  chassis.pid_wait();
+  
+  //grab rings;
+  Intake(200);
+  pros::delay(200);
+  Intake(0);
+}
+
+void Test() {
+  chassis.pid_drive_set(-24_in, DRIVE_SPEED_1, true);
+  chassis.pid_wait();
+
+  mogo.set(false);
+
+  chassis.pid_turn_set(90_deg, TURN_SPEED);
+  chassis.pid_wait();
+
+  chassis.pid_drive_set(24_in, DRIVE_SPEED_1, true);
+  chassis.pid_wait();
+
+  pros::delay(2000);
+}
+*/
+/*
+void red_right()
+{
+  //lift_pneumatic.set(false);
+  mogo.set(false); //lift the piston    
+  chassis.pid_drive_set(-32_in, DRIVE_SPEED_1);
+  chassis.pid_wait();
+  //move backward 5 inches and grasp the mobile goal
+  chassis.pid_drive_set(-5_in, DRIVE_SPEED_2);
+  mogo.set(true); //piston down
+  pros::delay(300);
+  Conveyor(200);
+  pros::delay(800);
+  Conveyor(0);
+  Intake(200);
+  chassis.pid_wait();
+  chassis.pid_turn_set(-65, TURN_SPEED);
+  chassis.pid_wait();
+  Conveyor(200);
+  chassis.pid_drive_set(35_in, DRIVE_SPEED_1);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-35_in, DRIVE_SPEED_1);
+  chassis.pid_wait();
+  chassis.pid_turn_set(180, TURN_SPEED);
+
+  Intake(0);
+  Conveyor(0);
+  chassis.pid_wait();
+  ladybrown.move_relative(2000, 150);
+  chassis.pid_drive_set(8_in, DRIVE_SPEED_2);
+}
+
+void red_left() {
+  //----- Lui -----
+  // move forward 48 inches
+  mogo.set(false); // lift the piston
+  chassis.pid_drive_set(45_in, DRIVE_SPEED_1, true);
+  //------ STEP2. lay banh xe ---------- 
+  // run intake
+  Intake(200); 
+  chassis.pid_wait_quick_chain();
+  // move backward 12 inches
+  chassis.pid_drive_set(-9_in, DRIVE_SPEED_1, true); 
+  chassis.pid_wait();
+  pros::delay(100);
+  
+  // stop intake  
+  // turn the robot 90 degrees counter-clockwise
+  chassis.pid_turn_set(-90_deg, TURN_SPEED); 
+  chassis.pid_wait();
+  // move backward 24 inches
+  chassis.pid_drive_set(-18_in, DRIVE_SPEED_1, true); 
+  chassis.pid_wait_until(-12_in); //old = -10
+  //grasp stake
+  mogo.set(true); 
+  chassis.pid_wait();
+  //activate the conveyor motors
+  Conveyor(200); 
+  pros::delay(1000);
+  // move forward 24 inches
+  chassis.pid_turn_set(60_deg, TURN_SPEED, true); 
+  chassis.pid_wait();
+  //stop conveyor
+  chassis.pid_drive_set(13_in, DRIVE_SPEED_1);
+  chassis.pid_wait();
+  //move ladybrown to touch the hang
+  ladybrown.move_relative(2000, 150);
+  pros::delay(2000);
+  Conveyor(0); 
+  Intake(0);
+  ladybrown.move_relative(-2000, 150);
+}
+
+void blue_right() {
+  //----- Lui -----
+  // move forward 48 inches
+  mogo.set(false); // lift the piston
+  chassis.pid_drive_set(45_in, DRIVE_SPEED_1, true);
+  //------ STEP2. lay banh xe ---------- 
+  // run intake
+  Intake(200); 
+  chassis.pid_wait_quick_chain();
+  // move backward 12 inches
+  chassis.pid_drive_set(-9_in, DRIVE_SPEED_1, true); 
+  chassis.pid_wait();
+  pros::delay(100);
+  
+  // stop intake  
+  // turn the robot 90 degrees counter-clockwise
+  chassis.pid_turn_set(90_deg, TURN_SPEED); 
+  chassis.pid_wait();
+  // move backward 24 inches
+  chassis.pid_drive_set(-18_in, DRIVE_SPEED_1, true); 
+  chassis.pid_wait_until(-12_in); // old = -10
+  //grasp stake
+  mogo.set(true); 
+  chassis.pid_wait();
+  //activate the conveyor motors
+  Conveyor(200); 
+  pros::delay(1000);
+  // move forward 24 inches
+  chassis.pid_turn_set(-60_deg, TURN_SPEED, true); 
+  chassis.pid_wait();
+  //stop conveyor
+  chassis.pid_drive_set(13_in, DRIVE_SPEED_1);
+  chassis.pid_wait();
+  //move ladybrown to touch the hang
+  ladybrown.move_relative(2000, 150);
+  pros::delay(2000);
+  Conveyor(0); 
+  Intake(0);
+}
+
+void blue_left()
+{
+  //lift_pneumatic.set(false);
+  mogo.set(false); //lift the piston
+  chassis.pid_drive_set(-32_in, DRIVE_SPEED_1);
+  chassis.pid_wait();
+  //move backward 5 inches and grasp the mobile goal
+  chassis.pid_drive_set(-5_in, DRIVE_SPEED_2);
+  mogo.set(true); //piston down
+  pros::delay(300);
+  Conveyor(200);
+  pros::delay(800);
+  Conveyor(0);
+  Intake(200);
+  chassis.pid_wait();
+  chassis.pid_turn_set(65_deg, TURN_SPEED);
+  chassis.pid_wait();
+  Conveyor(200);
+  chassis.pid_drive_set(35_in, DRIVE_SPEED_1);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-35_in, DRIVE_SPEED_1);
+  chassis.pid_wait();
+  chassis.pid_turn_set(180_deg, TURN_SPEED);
+  Intake(0);
+  Conveyor(0);
+  chassis.pid_wait();
+  ladybrown.move_relative(2000, 150);
+  chassis.pid_drive_set(8_in, DRIVE_SPEED_2);
+}
+
+void red_left_ver2(){
+  chassis.pid_drive_set(-18_in, DRIVE_SPEED_1);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(-18_in, DRIVE_SPEED_2);
+  chassis.pid_wait_until(-10_in);
+  mogo.set(true);
+  chassis.pid_wait();
+  chassis.pid_turn_set(60_deg, TURN_SPEED);
+  chassis.pid_wait();
+  Intake(200);
+  Conveyor(200);
+  chassis.pid_drive_set(35_in, DRIVE_SPEED_1);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(-10_in, DRIVE_SPEED_2);
+  chassis.pid_wait();
+  chassis.pid_turn_set(150_deg, TURN_SPEED);
+  chassis.pid_wait();
+  chassis.pid_drive_set(23_in, DRIVE_SPEED_2);
+  chassis.pid_wait();
+  pros::delay(800);
+  chassis.pid_drive_set(-23_in, DRIVE_SPEED_2);
+  chassis.pid_wait();
+  chassis.pid_turn_set(-120_deg, TURN_SPEED);
+  chassis.pid_wait();
+  chassis.pid_drive_set(8_in, DRIVE_SPEED_2);
+  chassis.pid_wait();
+  chassis.pid_turn_set(-150_deg, TURN_SPEED);
+  chassis.pid_wait();
+  chassis.pid_drive_set(23_in, DRIVE_SPEED_2);
+  chassis.pid_wait();
+  pros::delay(800);
+  chassis.pid_drive_set(-23_in, DRIVE_SPEED_2);
+  chassis.pid_wait();
+  chassis.pid_turn_set(-130_deg, TURN_SPEED);
+  chassis.pid_wait();
+  ladybrown.move_relative(2000, 150);
+  chassis.pid_drive_set(42_in, DRIVE_SPEED_1);
+  chassis.pid_wait();
+  pros::delay(500);
+  ladybrown.move_relative(-2000, 150);
+}
+*/
+void red_right_ver_2(){
+  mogo.set(false); //lift the piston
+  chassis.pid_drive_set(-32_in, DRIVE_SPEED_1);
+  chassis.pid_wait();
+  //move backward 5 inches and grasp the mobile goal
+  chassis.pid_drive_set(-5_in, DRIVE_SPEED_2);
+  mogo.set(true); //piston down
+  pros::delay(300);
+  Intake_Conveyor(200);
+  pros::delay(800);
+  Intake_Conveyor(0);  
+  chassis.pid_wait();
+  chassis.pid_turn_set(65, TURN_SPEED);
+  chassis.pid_wait();
+  Intake_Conveyor(200);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(35_in, DRIVE_SPEED_1);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-20_in, DRIVE_SPEED_2);
+  chassis.pid_wait();
+  chassis.pid_turn_set(-90_deg, TURN_SPEED); // old = 25 deg
+  chassis.pid_wait();
+  mogo.set(false);
+  pros::delay(200);
+  chassis.pid_drive_set(5_in, DRIVE_SPEED_2);
+  chassis.pid_wait();
+  chassis.pid_turn_set(180_deg, TURN_SPEED);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-15_in, DRIVE_SPEED_1);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-5_in, DRIVE_SPEED_2);
+  chassis.pid_wait();
+  mogo.set(true);
+  pros::delay(300);
+  chassis.pid_drive_set(22_in, DRIVE_SPEED_2);
+  chassis.pid_wait();
+  chassis.pid_turn_set(90_deg, TURN_SPEED);  // old = 115 deg
+  chassis.pid_wait();
+  chassis.pid_drive_set(22_in, DRIVE_SPEED_1);
+  chassis.pid_wait();
+  Intake_Conveyor(0);
+  ladybrown.move_relative(2000, 150);
+  chassis.pid_drive_set(6_in, DRIVE_SPEED_2);
+}
+
+/*
+void red_right_ver3()
+{
+  mogo.set(false); 
+  chassis.pid_drive_set(-32_in, DRIVE_SPEED_1);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-5_in, DRIVE_SPEED_2);
+  mogo.set(true);
+  pros::delay(300);
+  Conveyor(200);
+  pros::delay(800);
+  Conveyor(0);
+  Intake(200);  
+  chassis.pid_wait();
+  chassis.pid_turn_set(-65, TURN_SPEED);
+  chassis.pid_wait();
+  Conveyor(200);
+  chassis.pid_drive_set(35_in, DRIVE_SPEED_1);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-18_in, DRIVE_SPEED_1);
+  chassis.pid_wait();
+  chassis.pid_turn_set(65_deg, TURN_SPEED);
+  chassis.pid_wait();
+  corner_pneumatic.set(true);
+  chassis.pid_drive_set(40_in, DRIVE_SPEED_1);
+  chassis.pid_wait();
+  chassis.pid_turn_set(15_deg, TURN_SPEED);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-8_in, DRIVE_SPEED_2);
+  corner_pneumatic.set(false);
+  chassis.pid_wait();
+  chassis.pid_drive_set(8_in, DRIVE_SPEED_1);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-15_in, DRIVE_SPEED_1);
+  chassis.pid_wait();
+  chassis.pid_turn_set(180, TURN_SPEED);
+  Intake(0);
+  Conveyor(0);
+}
+
+void red_right_ver4(){
+  mogo.set(false);
+  corner_pneumatic.set(false);
+  chassis.pid_drive_set(-36_in, DRIVE_SPEED_1);
+  chassis.pid_wait();
+  chassis.pid_turn_set(-48_deg, TURN_SPEED);
+  chassis.pid_wait();
+  chassis.pid_drive_set(10_in, DRIVE_SPEED_1);
+  chassis.pid_wait();
+  chassis.pid_drive_set(7_in, DRIVE_SPEED_2);
+  chassis.pid_wait();
+  corner_pneumatic.set(true);
+  chassis.pid_drive_set(-17_in, DRIVE_SPEED_2);
+  chassis.pid_wait();
+  corner_pneumatic.set(false);
+  pros::delay(200);
+  chassis.pid_turn_set(-90_deg, TURN_SPEED);
+  chassis.pid_wait();
+  Intake(200);
+  chassis.pid_drive_set(38_in, DRIVE_SPEED_1);
+  chassis.pid_wait();
+  chassis.pid_turn_set(45_deg, TURN_SPEED);
+  chassis.pid_wait();
+  chassis.pid_drive_set(12_in, DRIVE_SPEED_1);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-30_in, DRIVE_SPEED_1);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-6_in, DRIVE_SPEED_2);
+  chassis.pid_wait();
+  mogo.set(true);
+  Conveyor(200);
+  chassis.pid_turn_set(180_deg, TURN_SPEED);
+  ladybrown.move_relative(2000, 150);
+  chassis.pid_drive_set(6_in, DRIVE_SPEED_2);
+  Intake(0);
+  Conveyor(0);
+
+
+}
+*/
