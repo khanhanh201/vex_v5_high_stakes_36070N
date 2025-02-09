@@ -1,9 +1,9 @@
 #include "main.h"
 
 //ladybrown macros
-#define ladybrown_angle 21
-#define ladybrown_deadband 0.6
-#define ladybrown_time_count 4
+#define ladybrown_angle 19
+#define ladybrown_deadband 2
+#define ladybrown_time_count 10
 
 //Vision
 #define color_detect 1 //1: blue, 2:red
@@ -22,7 +22,7 @@ ez::Drive chassis(
 
 
 
-my_custom_PID ladybrown_PID(6, 0, 0.1);
+my_custom_PID ladybrown_PID(5, 0, 1);
 double rotation_error;
 int rotation_count;
 bool manual_ladybrown = true;
@@ -39,7 +39,7 @@ void ladybrown_move_PID(double target)
 		rotation_error = target - ((double)(rotation_sensor.get_position())/100);
 		ladybrown.move_velocity(ladybrown_PID.update(rotation_error));
 
-    if(master.get_digital(DIGITAL_UP) || master.get_digital(DIGITAL_DOWN)) move_done = true;
+    if(master.get_digital(DIGITAL_R1) || master.get_digital(DIGITAL_R2)) move_done = true;
 
 		if (std::abs(rotation_error) < ladybrown_deadband) rotation_count++;
     if (rotation_count >= ladybrown_time_count) move_done = true;
@@ -67,12 +67,12 @@ void ladybrown_task()
 pros::Task Ladybrown_Task(ladybrown_task);
 
 
+
 int direction = 1;
 void vision_task()
 {
-  pros::delay(ez::util::DELAY_TIME);
-  pros::vision_signature_s_t blue_signature = pros::Vision::signature_from_utility(1, -3863, -3307, -3585, 5689, 8119, 6904, 4.200, 0);
-	pros::vision_signature_s_t red_signature = pros::Vision::signature_from_utility(2, 8629, 12603, 10616, -2185, -1329, -1757, 5.500, 0);
+  pros::vision_signature_s_t blue_signature = pros::Vision::signature_from_utility(1, -4975, -4167, -4570, 9391, 11823, 10606, 3.500, 0);
+	pros::vision_signature_s_t red_signature = pros::Vision::signature_from_utility(2, 11981, 15151, 13566, -2557, -1625, -2092, 3.000, 0);
 	vision_sensor.set_signature(1, &blue_signature);
 	vision_sensor.set_signature(2, &red_signature);
 	pros::vision_object_s_t largest_object;
@@ -80,30 +80,39 @@ void vision_task()
   while (true)
   {
     largest_object = vision_sensor.get_by_sig(0, color_detect); //blue_signature
+    vision_sensor.clear_led();
 
-		if (vision_sensor.get_object_count() > 0 && largest_object.width >= 250 && largest_object.height >= 190 && intake_motor.get_actual_velocity() > 1)
-		{
-			direction = direction * (-1);
-			pros::delay(120);
-			direction = direction * (-1);
-			pros::delay(500);
-		}
+    pros::lcd::set_text(1, std::to_string(largest_object.width));
+    pros::lcd::set_text(2, std::to_string(largest_object.height));
+
+    //width:260, height 200
+	  if (vision_sensor.get_object_count() > 0 && largest_object.width > 200 && largest_object.height > 180 && intake_motor.get_actual_velocity() > 1)
+	  {
+      pros::lcd::set_text(7, "blue ring seen");
+      pros::delay(50);
+		  direction = -1;
+      pros::delay(150);
+		  direction = 1;
+      pros::delay(ez::util::DELAY_TIME);
+	  }
+    else pros::lcd::set_text(7, "blue ring not seen");
 
 		pros::delay(ez::util::DELAY_TIME);
   }
-  
+  pros::delay(ez::util::DELAY_TIME);
 }
 pros::Task my_Vision_Task(vision_task);
+
+
 
 void display_task()
 {
   while (true)
   {
     pros::lcd::set_text(3, std::to_string((double)(rotation_sensor.get_position())/100));
-    pros::lcd::set_text(5, std::to_string(manual_ladybrown));
+    pros::lcd::set_text(5, std::to_string(direction));
     if (color_detect == 1) pros::lcd::set_text(6, "color detected: blue");
     if (color_detect == 2) pros::lcd::set_text(6, "color detected: red");
-    pros::lcd::set_text(7, std::to_string(intake_motor.get_actual_velocity()));
     pros::delay(ez::util::DELAY_TIME);
   }
 }
@@ -135,6 +144,7 @@ void initialize() {
   ladybrown.set_encoder_units(MOTOR_ENCODER_DEGREES);
   rotation_sensor.reset_position();
   rotation_sensor.set_reversed(true);
+  intake_motor.tare_position();
 
   master.rumble(chassis.drive_imu_calibrated() ? "." : "---");
 }
@@ -173,19 +183,19 @@ void opcontrol() {
     chassis.opcontrol_arcade_standard(ez::SPLIT);   // Standard split arcade
 
     // intake & conveyor
-    Intake_Conveyor((master.get_digital(DIGITAL_L1) - master.get_digital(DIGITAL_L2))*200);
+    Intake_Conveyor((master.get_digital(DIGITAL_L1) - master.get_digital(DIGITAL_L2))*200*direction);
 
     // ladybrown
 
     if(master.get_digital(DIGITAL_LEFT)) manual_ladybrown = false;
-    if(master.get_digital(DIGITAL_UP) || master.get_digital(DIGITAL_DOWN)) manual_ladybrown = true;
+    if(master.get_digital(DIGITAL_R1) || master.get_digital(DIGITAL_R2)) manual_ladybrown = true;
 
     if (manual_ladybrown) 
     {
-      if (((double)(rotation_sensor.get_position())/100) > 150) Ladybrown(master.get_digital(DIGITAL_DOWN)*(-200));
+      if (((double)(rotation_sensor.get_position())/100) > 150) Ladybrown(master.get_digital(DIGITAL_R2)*(-200));
       else
       {
-        Ladybrown((master.get_digital(DIGITAL_UP) - master.get_digital(DIGITAL_DOWN))*200*direction);
+        Ladybrown((master.get_digital(DIGITAL_R1) - master.get_digital(DIGITAL_R2))*200);
       }
     }
 
@@ -201,3 +211,15 @@ void opcontrol() {
     pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
   }
 }
+
+
+/*
+vision::signature RED_SIG (1, 11981, 15151, 13566, -2557, -1625, -2092, 3.000, 0);
+vision::signature BLUE_SIG (2, -4975, -4167, -4570, 9391, 11823, 10606, 3.500, 0);
+vision::signature SIG_3 (3, 0, 0, 0, 0, 0, 0, 3.000, 0);
+vision::signature SIG_4 (4, 0, 0, 0, 0, 0, 0, 3.000, 0);
+vision::signature SIG_5 (5, 0, 0, 0, 0, 0, 0, 3.000, 0);
+vision::signature SIG_6 (6, 0, 0, 0, 0, 0, 0, 3.000, 0);
+vision::signature SIG_7 (7, 0, 0, 0, 0, 0, 0, 3.000, 0);
+vex::vision vision1 ( vex::PORT1, 50, RED_SIG, BLUE_SIG, SIG_3, SIG_4, SIG_5, SIG_6, SIG_7 );
+*/

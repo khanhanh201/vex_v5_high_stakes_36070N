@@ -4,7 +4,7 @@
 pros::Rotation rotation_sensor(5);
 
 //vision sensor
-pros::Vision vision_sensor(20);
+pros::Vision vision_sensor(13);
 
 // intake & conveyor
 pros::MotorGroup intake_motor({-12, 11}, pros::v5::MotorGears::green);
