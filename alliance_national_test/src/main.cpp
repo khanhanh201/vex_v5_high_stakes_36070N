@@ -5,8 +5,6 @@
 #define ladybrown_deadband 2
 #define ladybrown_time_count 10
 
-//Vision
-#define color_detect 1 //1: blue, 2:red
 
 
 
@@ -69,6 +67,7 @@ pros::Task Ladybrown_Task(ladybrown_task);
 
 
 int direction = 1;
+string color_detect = "red";
 void vision_task()
 {
   pros::vision_signature_s_t blue_signature = pros::Vision::signature_from_utility(1, -4975, -4167, -4570, 9391, 11823, 10606, 3.500, 0);
@@ -77,27 +76,56 @@ void vision_task()
 	vision_sensor.set_signature(2, &red_signature);
 	pros::vision_object_s_t largest_object;
   
-  while (true)
+  if (color_detect == "blue") //blue
   {
-    largest_object = vision_sensor.get_by_sig(0, color_detect); //blue_signature
-    vision_sensor.clear_led();
+    while (true)
+    {
+      largest_object = vision_sensor.get_by_sig(0, 1); //blue_signature
+      vision_sensor.clear_led();
 
-    pros::lcd::set_text(1, std::to_string(largest_object.width));
-    pros::lcd::set_text(2, std::to_string(largest_object.height));
+      pros::lcd::set_text(1, std::to_string(largest_object.width));
+      pros::lcd::set_text(2, std::to_string(largest_object.height));
 
-    //width:260, height 200
-	  if (vision_sensor.get_object_count() > 0 && largest_object.width > 200 && largest_object.height > 180 && intake_motor.get_actual_velocity() > 1)
-	  {
-      pros::lcd::set_text(7, "blue ring seen");
-      pros::delay(50);
-		  direction = -1;
-      pros::delay(150);
-		  direction = 1;
+      //width:260, height 200
+      if (vision_sensor.get_object_count() > 0 && largest_object.width > 220 && largest_object.height > 170 && intake_motor.get_actual_velocity() > 1)
+      {
+        pros::lcd::set_text(7, "blue ring seen");
+        pros::delay(50);
+        direction = -1;
+        pros::delay(200);
+        direction = 1;
+        pros::delay(500);
+      }
+      else pros::lcd::set_text(7, "blue ring not seen");
+
       pros::delay(ez::util::DELAY_TIME);
-	  }
-    else pros::lcd::set_text(7, "blue ring not seen");
+    }
+  }
 
-		pros::delay(ez::util::DELAY_TIME);
+  if (color_detect == "red") //red
+  {
+    while (true)
+    {
+      largest_object = vision_sensor.get_by_sig(0, 2); //red_signature
+      vision_sensor.clear_led();
+
+      pros::lcd::set_text(1, std::to_string(largest_object.width));
+      pros::lcd::set_text(2, std::to_string(largest_object.height));
+
+      //width:260, height 200
+      if (vision_sensor.get_object_count() > 0 && largest_object.width > 220 && largest_object.height > 200 && intake_motor.get_actual_velocity() > 1)
+      {
+        pros::lcd::set_text(7, "red ring seen");
+        pros::delay(45);
+        direction = -1;
+        pros::delay(200);
+        direction = 1;
+        pros::delay(500);
+      }
+      else pros::lcd::set_text(7, "red ring not seen");
+
+      pros::delay(ez::util::DELAY_TIME);
+    }
   }
   pros::delay(ez::util::DELAY_TIME);
 }
@@ -111,8 +139,8 @@ void display_task()
   {
     pros::lcd::set_text(3, std::to_string((double)(rotation_sensor.get_position())/100));
     pros::lcd::set_text(5, std::to_string(direction));
-    if (color_detect == 1) pros::lcd::set_text(6, "color detected: blue");
-    if (color_detect == 2) pros::lcd::set_text(6, "color detected: red");
+    if (color_detect == "blue") pros::lcd::set_text(6, "color detected: blue");
+    if (color_detect == "red") pros::lcd::set_text(6, "color detected: red");
     pros::delay(ez::util::DELAY_TIME);
   }
 }
