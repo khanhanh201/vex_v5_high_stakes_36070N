@@ -6,6 +6,12 @@
 #define ladybrown_time_count 10
 
 
+/**
+ * before each match:
+ * - check auton
+ * - check color sorted
+ * - check ladybrown position
+ */
 
 
 // Chassis constructor
@@ -90,6 +96,7 @@ void vision_task()
       if (vision_sensor.get_object_count() > 0 && largest_object.width > 220 && largest_object.height > 170 && intake_motor.get_actual_velocity() > 1)
       {
         pros::lcd::set_text(7, "blue ring seen");
+        master.rumble("-");
         pros::delay(50);
         direction = -1;
         pros::delay(200);
@@ -112,11 +119,12 @@ void vision_task()
       pros::lcd::set_text(1, std::to_string(largest_object.width));
       pros::lcd::set_text(2, std::to_string(largest_object.height));
 
-      //width:260, height 200
-      if (vision_sensor.get_object_count() > 0 && largest_object.width > 220 && largest_object.height > 200 && intake_motor.get_actual_velocity() > 1)
+      //width:316, height 212
+      if (vision_sensor.get_object_count() > 0 && largest_object.width > 220 && largest_object.height > 190 && intake_motor.get_actual_velocity() > 1)
       {
         pros::lcd::set_text(7, "red ring seen");
-        pros::delay(45);
+        master.rumble("-");
+        pros::delay(47);
         direction = -1;
         pros::delay(200);
         direction = 1;
@@ -240,14 +248,3 @@ void opcontrol() {
   }
 }
 
-
-/*
-vision::signature RED_SIG (1, 11981, 15151, 13566, -2557, -1625, -2092, 3.000, 0);
-vision::signature BLUE_SIG (2, -4975, -4167, -4570, 9391, 11823, 10606, 3.500, 0);
-vision::signature SIG_3 (3, 0, 0, 0, 0, 0, 0, 3.000, 0);
-vision::signature SIG_4 (4, 0, 0, 0, 0, 0, 0, 3.000, 0);
-vision::signature SIG_5 (5, 0, 0, 0, 0, 0, 0, 3.000, 0);
-vision::signature SIG_6 (6, 0, 0, 0, 0, 0, 0, 3.000, 0);
-vision::signature SIG_7 (7, 0, 0, 0, 0, 0, 0, 3.000, 0);
-vex::vision vision1 ( vex::PORT1, 50, RED_SIG, BLUE_SIG, SIG_3, SIG_4, SIG_5, SIG_6, SIG_7 );
-*/

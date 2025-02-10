@@ -7,6 +7,7 @@
 
 // These are out of 127
 const int DRIVE_SPEED = 110;
+const int SLOW_DRIVE_SPEED = 90;
 const int TURN_SPEED = 90;
 const int SWING_SPEED = 110;
 
@@ -211,3 +212,22 @@ void negative_red(){
   pros::delay(1000);
   Intake_Conveyor(0);
 }*/
+
+
+void red_right()
+{
+  Intake_Conveyor(200);
+  chassis.pid_drive_set(50_in, DRIVE_SPEED);
+  chassis.pid_wait();
+  Doinker(true);
+  pros::delay(200);
+  Intake_Conveyor(0);
+  chassis.pid_drive_set(-10, DRIVE_SPEED);
+  chassis.pid_wait();
+  chassis.pid_turn_set(180, TURN_SPEED);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-10, SLOW_DRIVE_SPEED);
+  chassis.pid_wait();
+  Mogo(true);
+  
+}
