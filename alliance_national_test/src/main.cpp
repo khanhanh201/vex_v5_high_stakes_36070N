@@ -73,7 +73,9 @@ pros::Task Ladybrown_Task(ladybrown_task);
 
 
 int direction = 1;
-string color_detect = "red";
+bool enable_sort = true;
+string color_detect = "blue";
+
 void vision_task()
 {
   pros::vision_signature_s_t blue_signature = pros::Vision::signature_from_utility(1, -4975, -4167, -4570, 9391, 11823, 10606, 3.500, 0);
@@ -84,7 +86,7 @@ void vision_task()
   
   if (color_detect == "blue") //blue
   {
-    while (true)
+    while (enable_sort)
     {
       largest_object = vision_sensor.get_by_sig(0, 1); //blue_signature
       vision_sensor.clear_led();
@@ -93,15 +95,15 @@ void vision_task()
       pros::lcd::set_text(2, std::to_string(largest_object.height));
 
       //width:260, height 200
-      if (vision_sensor.get_object_count() > 0 && largest_object.width > 220 && largest_object.height > 170 && intake_motor.get_actual_velocity() > 1)
+      if (vision_sensor.get_object_count() > 0 && largest_object.width > 220 && largest_object.height > 175 && intake_motor.get_actual_velocity() > 1)
       {
         pros::lcd::set_text(7, "blue ring seen");
         master.rumble("-");
-        pros::delay(50);
+        pros::delay(65);
         direction = -1;
         pros::delay(200);
         direction = 1;
-        pros::delay(500);
+        pros::delay(700);
       }
       else pros::lcd::set_text(7, "blue ring not seen");
 
@@ -111,7 +113,7 @@ void vision_task()
 
   if (color_detect == "red") //red
   {
-    while (true)
+    while (enable_sort)
     {
       largest_object = vision_sensor.get_by_sig(0, 2); //red_signature
       vision_sensor.clear_led();
@@ -123,12 +125,12 @@ void vision_task()
       if (vision_sensor.get_object_count() > 0 && largest_object.width > 220 && largest_object.height > 190 && intake_motor.get_actual_velocity() > 1)
       {
         pros::lcd::set_text(7, "red ring seen");
-        master.rumble("-");
         pros::delay(47);
+        master.rumble("-");
         direction = -1;
         pros::delay(200);
         direction = 1;
-        pros::delay(500);
+        pros::delay(700);
       }
       else pros::lcd::set_text(7, "red ring not seen");
 
@@ -203,7 +205,7 @@ void autonomous() {
   chassis.odom_xyt_set(0_in, 0_in, 0_deg);    // Set the current position, you can start at a specific position with this
   chassis.drive_brake_set(MOTOR_BRAKE_HOLD);  // Set motors to hold.  This helps autonomous consistency
 
-  negative_red();
+  red_right_ver_2();
 }
 
 
@@ -228,7 +230,7 @@ void opcontrol() {
 
     if (manual_ladybrown) 
     {
-      if (((double)(rotation_sensor.get_position())/100) > 150) Ladybrown(master.get_digital(DIGITAL_R2)*(-200));
+      if (((double)(rotation_sensor.get_position())/100) > 135) Ladybrown(master.get_digital(DIGITAL_R2)*(-200));
       else
       {
         Ladybrown((master.get_digital(DIGITAL_R1) - master.get_digital(DIGITAL_R2))*200);
@@ -243,6 +245,8 @@ void opcontrol() {
 
     // doinker pneumatics
     Doinker(master.get_digital(DIGITAL_A));
+
+    if (master.get_digital(DIGITAL_RIGHT)) enable_sort = !enable_sort;
 
     pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
   }

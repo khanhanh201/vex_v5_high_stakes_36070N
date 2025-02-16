@@ -11,3 +11,4 @@ void positive_blue();
 void test_ACE();
 void my_test();
 void red_right();
+void red_right_ver_2();

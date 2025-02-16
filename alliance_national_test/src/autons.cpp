@@ -11,6 +11,9 @@ const int SLOW_DRIVE_SPEED = 90;
 const int TURN_SPEED = 90;
 const int SWING_SPEED = 110;
 
+#define DRIVE_SPEED_1 120
+#define DRIVE_SPEED_2 90
+
 ///
 // Constants
 ///
@@ -230,4 +233,57 @@ void red_right()
   chassis.pid_wait();
   Mogo(true);
   
+}
+
+
+void red_right_ver_2(){
+  mogo.set(false); //lift the piston
+  chassis.pid_drive_set(-29_in, DRIVE_SPEED_1);
+  chassis.pid_wait();
+  //move backward 5 inches and grasp the mobile goal
+  chassis.pid_drive_set(-5_in, DRIVE_SPEED_2);
+  chassis.pid_wait();
+  mogo.set(true); //piston down
+  pros::delay(300);
+  Intake_Conveyor(200);
+  pros::delay(800);
+  Intake_Conveyor(0);  
+  chassis.pid_wait();
+  chassis.pid_drive_set(6_in, DRIVE_SPEED_2);
+  chassis.pid_wait();
+  chassis.pid_turn_set(-65, TURN_SPEED);
+  chassis.pid_wait();
+  Intake_Conveyor(200);
+  chassis.pid_wait();
+  Intake_Conveyor(200);
+  chassis.pid_drive_set(30_in, DRIVE_SPEED_1);
+  Intake_Conveyor(200);
+  chassis.pid_wait();
+  Intake_Conveyor(200);
+  chassis.pid_drive_set(-5_in, DRIVE_SPEED_2);
+  Intake_Conveyor(200);
+  chassis.pid_wait();
+  Intake_Conveyor(200);
+  chassis.pid_turn_set(-155_deg, TURN_SPEED); // old = 25 deg
+  Intake_Conveyor(200);
+  chassis.pid_wait();
+  mogo.set(false);
+  chassis.pid_drive_set(3_in, DRIVE_SPEED_2);
+  chassis.pid_wait();
+  chassis.pid_turn_set(25_deg, TURN_SPEED);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-15_in, DRIVE_SPEED_2);//old = 120_velocity, -17_in
+  chassis.pid_wait();
+  mogo.set(true);
+  pros::delay(300);
+  chassis.pid_drive_set(12_in, DRIVE_SPEED_2);
+  chassis.pid_wait();
+  chassis.pid_turn_set(125_deg, TURN_SPEED);  // old = 115 deg
+  chassis.pid_wait();
+  mogo.set(false);
+  chassis.pid_drive_set(15_in, DRIVE_SPEED_1);
+  chassis.pid_wait();
+  Intake_Conveyor(0);
+  ladybrown.move_relative(2000, 150);
+  chassis.pid_drive_set(6_in, DRIVE_SPEED_2);
 }
