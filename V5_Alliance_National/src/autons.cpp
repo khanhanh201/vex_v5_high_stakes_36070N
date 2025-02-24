@@ -6,10 +6,10 @@
 /////
 
 // These are out of 127
-const int DRIVE_SPEED_1 = 120;
+const int DRIVE_SPEED_HIGH = 120;
 const int TURN_SPEED = 90;
 const int SWING_SPEED = 110;
-const int DRIVE_SPEED_2 = 90;
+const int DRIVE_SPEED_LOW = 90;
 
 void default_constants() {
   // P, I, D, and Start I
@@ -259,7 +259,7 @@ void negative_red(){
 /*
 void Auto15s() {
   // move backward to grasp stake
-  chassis.pid_drive_set(-24_in, DRIVE_SPEED_1, true);
+  chassis.pid_drive_set(-24_in, DRIVE_SPEED_HIGH, true);
   chassis.pid_wait();
 
   // grab stake
@@ -269,7 +269,7 @@ void Auto15s() {
   chassis.pid_wait();
 
   // move forward to grab rings
-  chassis.pid_drive_set(24_in, DRIVE_SPEED_1, true);
+  chassis.pid_drive_set(24_in, DRIVE_SPEED_HIGH, true);
   chassis.pid_wait();
   
   //grab rings;
@@ -279,7 +279,7 @@ void Auto15s() {
 }
 
 void Test() {
-  chassis.pid_drive_set(-24_in, DRIVE_SPEED_1, true);
+  chassis.pid_drive_set(-24_in, DRIVE_SPEED_HIGH, true);
   chassis.pid_wait();
 
   mogo.set(false);
@@ -287,7 +287,7 @@ void Test() {
   chassis.pid_turn_set(90_deg, TURN_SPEED);
   chassis.pid_wait();
 
-  chassis.pid_drive_set(24_in, DRIVE_SPEED_1, true);
+  chassis.pid_drive_set(24_in, DRIVE_SPEED_HIGH, true);
   chassis.pid_wait();
 
   pros::delay(2000);
@@ -298,10 +298,10 @@ void red_right()
 {
   //lift_pneumatic.set(false);
   mogo.set(false); //lift the piston    
-  chassis.pid_drive_set(-32_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(-32_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait();
   //move backward 5 inches and grasp the mobile goal
-  chassis.pid_drive_set(-5_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(-5_in, DRIVE_SPEED_LOW);
   mogo.set(true); //piston down
   pros::delay(300);
   Conveyor(200);
@@ -312,9 +312,9 @@ void red_right()
   chassis.pid_turn_set(-65, TURN_SPEED);
   chassis.pid_wait();
   Conveyor(200);
-  chassis.pid_drive_set(35_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(35_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait();
-  chassis.pid_drive_set(-35_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(-35_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait();
   chassis.pid_turn_set(180, TURN_SPEED);
 
@@ -322,20 +322,20 @@ void red_right()
   Conveyor(0);
   chassis.pid_wait();
   ladybrown.move_relative(2000, 150);
-  chassis.pid_drive_set(8_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(8_in, DRIVE_SPEED_LOW);
 }
 
 void red_left() {
   //----- Lui -----
   // move forward 48 inches
   mogo.set(false); // lift the piston
-  chassis.pid_drive_set(45_in, DRIVE_SPEED_1, true);
+  chassis.pid_drive_set(45_in, DRIVE_SPEED_HIGH, true);
   //------ STEP2. lay banh xe ---------- 
   // run intake
   Intake(200); 
   chassis.pid_wait_quick_chain();
   // move backward 12 inches
-  chassis.pid_drive_set(-9_in, DRIVE_SPEED_1, true); 
+  chassis.pid_drive_set(-9_in, DRIVE_SPEED_HIGH, true); 
   chassis.pid_wait();
   pros::delay(100);
   
@@ -344,7 +344,7 @@ void red_left() {
   chassis.pid_turn_set(-90_deg, TURN_SPEED); 
   chassis.pid_wait();
   // move backward 24 inches
-  chassis.pid_drive_set(-18_in, DRIVE_SPEED_1, true); 
+  chassis.pid_drive_set(-18_in, DRIVE_SPEED_HIGH, true); 
   chassis.pid_wait_until(-12_in); //old = -10
   //grasp stake
   mogo.set(true); 
@@ -356,7 +356,7 @@ void red_left() {
   chassis.pid_turn_set(60_deg, TURN_SPEED, true); 
   chassis.pid_wait();
   //stop conveyor
-  chassis.pid_drive_set(13_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(13_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait();
   //move ladybrown to touch the hang
   ladybrown.move_relative(2000, 150);
@@ -370,13 +370,13 @@ void blue_right() {
   //----- Lui -----
   // move forward 48 inches
   mogo.set(false); // lift the piston
-  chassis.pid_drive_set(45_in, DRIVE_SPEED_1, true);
+  chassis.pid_drive_set(45_in, DRIVE_SPEED_HIGH, true);
   //------ STEP2. lay banh xe ---------- 
   // run intake
   Intake(200); 
   chassis.pid_wait_quick_chain();
   // move backward 12 inches
-  chassis.pid_drive_set(-9_in, DRIVE_SPEED_1, true); 
+  chassis.pid_drive_set(-9_in, DRIVE_SPEED_HIGH, true); 
   chassis.pid_wait();
   pros::delay(100);
   
@@ -385,7 +385,7 @@ void blue_right() {
   chassis.pid_turn_set(90_deg, TURN_SPEED); 
   chassis.pid_wait();
   // move backward 24 inches
-  chassis.pid_drive_set(-18_in, DRIVE_SPEED_1, true); 
+  chassis.pid_drive_set(-18_in, DRIVE_SPEED_HIGH, true); 
   chassis.pid_wait_until(-12_in); // old = -10
   //grasp stake
   mogo.set(true); 
@@ -397,7 +397,7 @@ void blue_right() {
   chassis.pid_turn_set(-60_deg, TURN_SPEED, true); 
   chassis.pid_wait();
   //stop conveyor
-  chassis.pid_drive_set(13_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(13_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait();
   //move ladybrown to touch the hang
   ladybrown.move_relative(2000, 150);
@@ -410,10 +410,10 @@ void blue_left()
 {
   //lift_pneumatic.set(false);
   mogo.set(false); //lift the piston
-  chassis.pid_drive_set(-32_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(-32_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait();
   //move backward 5 inches and grasp the mobile goal
-  chassis.pid_drive_set(-5_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(-5_in, DRIVE_SPEED_LOW);
   mogo.set(true); //piston down
   pros::delay(300);
   Conveyor(200);
@@ -424,22 +424,22 @@ void blue_left()
   chassis.pid_turn_set(65_deg, TURN_SPEED);
   chassis.pid_wait();
   Conveyor(200);
-  chassis.pid_drive_set(35_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(35_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait();
-  chassis.pid_drive_set(-35_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(-35_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait();
   chassis.pid_turn_set(180_deg, TURN_SPEED);
   Intake(0);
   Conveyor(0);
   chassis.pid_wait();
   ladybrown.move_relative(2000, 150);
-  chassis.pid_drive_set(8_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(8_in, DRIVE_SPEED_LOW);
 }
 
 void red_left_ver2(){
-  chassis.pid_drive_set(-18_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(-18_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait_quick_chain();
-  chassis.pid_drive_set(-18_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(-18_in, DRIVE_SPEED_LOW);
   chassis.pid_wait_until(-10_in);
   mogo.set(true);
   chassis.pid_wait();
@@ -447,45 +447,45 @@ void red_left_ver2(){
   chassis.pid_wait();
   Intake(200);
   Conveyor(200);
-  chassis.pid_drive_set(35_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(35_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait_quick_chain();
-  chassis.pid_drive_set(-10_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(-10_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   chassis.pid_turn_set(150_deg, TURN_SPEED);
   chassis.pid_wait();
-  chassis.pid_drive_set(23_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(23_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   pros::delay(800);
-  chassis.pid_drive_set(-23_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(-23_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   chassis.pid_turn_set(-120_deg, TURN_SPEED);
   chassis.pid_wait();
-  chassis.pid_drive_set(8_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(8_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   chassis.pid_turn_set(-150_deg, TURN_SPEED);
   chassis.pid_wait();
-  chassis.pid_drive_set(23_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(23_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   pros::delay(800);
-  chassis.pid_drive_set(-23_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(-23_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   chassis.pid_turn_set(-130_deg, TURN_SPEED);
   chassis.pid_wait();
   ladybrown.move_relative(2000, 150);
-  chassis.pid_drive_set(42_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(42_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait();
   pros::delay(500);
   ladybrown.move_relative(-2000, 150);
 }
 */
 
-/*
+
 void red_right_ver_2(){
   mogo.set(false); //lift the piston
-  chassis.pid_drive_set(-29_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(-29_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait();
   //move backward 5 inches and grasp the mobile goal
-  chassis.pid_drive_set(-5_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(-5_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   mogo.set(true); //piston down
   pros::delay(300);
@@ -493,48 +493,48 @@ void red_right_ver_2(){
   pros::delay(800);
   Intake_Conveyor(0);  
   chassis.pid_wait();
-  chassis.pid_drive_set(6_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(6_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   chassis.pid_turn_set(-65, TURN_SPEED);
   chassis.pid_wait();
   Intake_Conveyor(200);
   chassis.pid_wait();
-  chassis.pid_drive_set(30_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(30_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait();
-  chassis.pid_drive_set(-5_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(-5_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   chassis.pid_turn_set(-155_deg, TURN_SPEED); // old = 25 deg
   chassis.pid_wait();
   mogo.set(false);
-  chassis.pid_drive_set(3_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(3_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   chassis.pid_turn_set(25_deg, TURN_SPEED);
   chassis.pid_wait();
-  chassis.pid_drive_set(-17_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(-17_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait();
   mogo.set(true);
   pros::delay(300);
-  chassis.pid_drive_set(12_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(12_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   chassis.pid_turn_set(125_deg, TURN_SPEED);  // old = 115 deg
   chassis.pid_wait();
   mogo.set(false);
-  chassis.pid_drive_set(15_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(15_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait();
   Intake_Conveyor(0);
   ladybrown.move_relative(2000, 150);
-  chassis.pid_drive_set(6_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(6_in, DRIVE_SPEED_LOW);
 }
-*/
+
 
 
 /*
 void red_right_ver3()
 {
   mogo.set(false); 
-  chassis.pid_drive_set(-32_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(-32_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait();
-  chassis.pid_drive_set(-5_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(-5_in, DRIVE_SPEED_LOW);
   mogo.set(true);
   pros::delay(300);
   Conveyor(200);
@@ -545,23 +545,23 @@ void red_right_ver3()
   chassis.pid_turn_set(-65, TURN_SPEED);
   chassis.pid_wait();
   Conveyor(200);
-  chassis.pid_drive_set(35_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(35_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait();
-  chassis.pid_drive_set(-18_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(-18_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait();
   chassis.pid_turn_set(65_deg, TURN_SPEED);
   chassis.pid_wait();
   corner_pneumatic.set(true);
-  chassis.pid_drive_set(40_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(40_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait();
   chassis.pid_turn_set(15_deg, TURN_SPEED);
   chassis.pid_wait();
-  chassis.pid_drive_set(-8_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(-8_in, DRIVE_SPEED_LOW);
   corner_pneumatic.set(false);
   chassis.pid_wait();
-  chassis.pid_drive_set(8_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(8_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait();
-  chassis.pid_drive_set(-15_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(-15_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait();
   chassis.pid_turn_set(180, TURN_SPEED);
   Intake(0);
@@ -572,28 +572,28 @@ void red_right_ver3()
 void red_right_ver_4(){
   mogo.set(false);
   doinker_pneumatic.set(false);
-  chassis.pid_drive_set(-36_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(-36_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait();
   chassis.pid_turn_set(-40_deg, TURN_SPEED);
   chassis.pid_wait();
-  chassis.pid_drive_set(-17_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(-17_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait();
   doinker_pneumatic
-  chassis.pid_drive_set(-6_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(-6_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   mogo.set(true);
-  chassis.pid_drive_set(7_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(7_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait();
   chassis.pid_turn_set(0_deg, TURN_SPEED);  
   chassis.pid_wait();
   Intake_Conveyor(200);
-  chassis.pid_drive_set(25_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(25_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
-  chassis.pid_drive_set(-17_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(-17_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait();
   chassis.pid_turn_set(90_deg, TURN_SPEED);
   chassis.pid_wait();
-  chassis.pid_drive_set(30_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(30_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait();
   ladybrown.move_relative(2000, 150);
   Intake_Conveyor(0);
@@ -603,23 +603,23 @@ void red_right_ver_4(){
 
 /*
 void red_right_ver_5(){
-  chassis.pid_drive_set(35_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(35_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait();
   Intake_Conveyor(200);
   pros::delay(400);
   Intake_Conveyor(0);
   chassis.pid_turn_set(25_deg, TURN_SPEED);
   chassis.pid_wait();
-  chassis.pid_drive_set(18_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(18_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   doinker_pneumatic.set(true);
-  chassis.pid_drive_set(-20_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(-20_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   doinker_pneumatic.set(false);
   pros::delay(200);
   chassis.pid_turn_set(-165_deg, TURN_SPEED);
   chassis.pid_wait();
-  chassis.pid_drive_set(-7_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(-7_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   mogo.set(true);
   Intake_Conveyor(200);
@@ -630,35 +630,31 @@ void red_right_ver_5(){
   //doinker = 10_in
   //3-4
   mogo.set(false); //lift the piston
-  chassis.pid_drive_set(-25_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(-25_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
-  //move backward 5 inches and grasp the mobile goal
-  // chassis.pid_drive_set(-5_in, DRIVE_SPEED_2);
-
-  // chassis.pid_wait();
   mogo.set(true); //piston down
   pros::delay(300);
   Intake_Conveyor(200);
   pros::delay(800);
   Intake_Conveyor(0);  
   chassis.pid_wait();
-  chassis.pid_drive_set(-6_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(-6_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   chassis.pid_turn_set(-65_deg, TURN_SPEED);
   chassis.pid_wait();
   Intake_Conveyor(200);
   chassis.pid_wait();
-  chassis.pid_drive_set(30_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(30_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait();
   pros::delay(300);
   chassis.pid_turn_set(115_deg, TURN_SPEED);
   chassis.pid_wait();
   //mogo.set(false);
-  chassis.pid_drive_set(30_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(30_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   chassis.pid_turn_set(62_deg, TURN_SPEED);
   chassis.pid_wait();
-  chassis.pid_drive_set(19_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(19_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait();
   doinker_pneumatic.set(true);
   pros::delay(200);
@@ -668,23 +664,23 @@ void red_right_ver_5(){
   pros::delay(300);
   chassis.pid_turn_set(115_deg, TURN_SPEED);
   chassis.pid_wait();
-  chassis.pid_drive_set(15_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(15_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   Intake_Conveyor(200);
-  chassis.pid_drive_set(-17_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(-17_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   chassis.pid_turn_set(150_deg, TURN_SPEED);
   chassis.pid_wait();
-  chassis.pid_drive_set(10_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(10_in, DRIVE_SPEED_LOW);
   ladybrown.move_relative(2000, 150);
   /*
   chassis.pid_turn_set(25_deg, TURN_SPEED);
   chassis.pid_wait();
-  chassis.pid_drive_set(24_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(24_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait();
   chassis.pid_turn_set(-65_deg, TURN_SPEED);
   chassis.pid_wait();
-  chassis.pid_drive_set(-10_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(-10_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   chassis.pid_turn_set(-155_deg, TURN_SPEED);
   Intake_Conveyor(200);
@@ -695,21 +691,21 @@ void red_right_ver_5(){
 
 
   /*
-  chassis.pid_drive_set(-15_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(-15_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   doinker_pneumatic.set(false);
-  chassis.pid_drive_set(15_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(15_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   Intake_Conveyor(200);
   pros::delay(250);
   Intake_Conveyor(0);
   chassis.pid_turn_set(25_deg, TURN_SPEED);
   chassis.pid_wait();
-  chassis.pid_drive_set(24_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(24_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait();
   chassis.pid_turn_set(-65_deg, TURN_SPEED);
   chassis.pid_wait();
-  chassis.pid_drive_set(-10_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(-10_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   chassis.pid_turn_set(155_deg, TURN_SPEED);
   Intake_Conveyor(200);
@@ -720,7 +716,7 @@ void red_right_ver_5(){
 
 
 void red_right_ver_6(){
-  chassis.pid_drive_set(-12_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(-12_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   chassis.pid_turn_set(-90_deg, TURN_SPEED);
   chassis.pid_wait();
@@ -728,29 +724,29 @@ void red_right_ver_6(){
   pros::delay(800);
   chassis.pid_turn_set(97_deg, TURN_SPEED);
   chassis.pid_wait();
-  chassis.pid_drive_set(-27_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(-27_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait();
-  chassis.pid_drive_set(-5_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(-5_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   mogo.set(true); 
-  chassis.pid_drive_set(2_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(2_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   chassis.pid_turn_set(0_deg, TURN_SPEED);
   chassis.pid_wait();
   Intake_Conveyor(200);
   chassis.pid_wait();
-  chassis.pid_drive_set(30_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(30_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait();
   chassis.pid_turn_set(180_deg, TURN_SPEED);
   chassis.pid_wait(); 
-  chassis.pid_drive_set(30_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(30_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait();
   mogo.set(false);
   pros::delay(250);
   /*
   chassis.pid_turn_set(-68_deg, TURN_SPEED);
   chassis.pid_wait();
-  chassis.pid_drive_set(19_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(19_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait();
   doinker_pneumatic.set(true);
   pros::delay(200);
@@ -760,14 +756,14 @@ void red_right_ver_6(){
   pros::delay(300);
   chassis.pid_turn_set(180_deg, TURN_SPEED);
   chassis.pid_wait();
-  chassis.pid_drive_set(15_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(15_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   Intake_Conveyor(200);
-  chassis.pid_drive_set(-17_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(-17_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   chassis.pid_turn_set(150_deg, TURN_SPEED);
   chassis.pid_wait();
-  chassis.pid_drive_set(10_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(10_in, DRIVE_SPEED_LOW);
   ladybrown.move_relative(2000, 150);
   */
 }
@@ -777,10 +773,10 @@ void red_right_ver_7(){
   //doinker = 10_in
   //3-4
   mogo.set(false); //lift the piston
-  chassis.pid_drive_set(-26_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(-26_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   //move backward 5 inches and grasp the mobile goal
-  // chassis.pid_drive_set(-5_in, DRIVE_SPEED_2);
+  // chassis.pid_drive_set(-5_in, DRIVE_SPEED_LOW);
 
   // chassis.pid_wait();
   mogo.set(true); //piston down
@@ -789,13 +785,13 @@ void red_right_ver_7(){
   pros::delay(800);
   Intake_Conveyor(0);  
   chassis.pid_wait();
-  // chassis.pid_drive_set(-6_in, DRIVE_SPEED_2);
+  // chassis.pid_drive_set(-6_in, DRIVE_SPEED_LOW);
   // chassis.pid_wait();
   chassis.pid_turn_set(-83_deg, TURN_SPEED);
   chassis.pid_wait();
   Intake_Conveyor(200);
   chassis.pid_wait();
-  chassis.pid_drive_set(22_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(22_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait();
   pros::delay(500);
   Intake_Conveyor(0);
@@ -804,7 +800,7 @@ void red_right_ver_7(){
   chassis.pid_turn_set(78_deg, TURN_SPEED);
   chassis.pid_wait();
   mogo.set(false);
-  chassis.pid_drive_set(41_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(41_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait();
   doinker_pneumatic.set(true);
   pros::delay(200);
@@ -816,29 +812,29 @@ void red_right_ver_7(){
   chassis.pid_turn_set(125_deg, TURN_SPEED);
   chassis.pid_wait();
   Intake_Conveyor(50);
-  chassis.pid_drive_set(20_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(20_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   Intake_Conveyor(0);
 
   chassis.pid_turn_set(-165_deg, TURN_SPEED);
   chassis.pid_wait();
-  chassis.pid_drive_set(-20_in, DRIVE_SPEED_2-15);
+  chassis.pid_drive_set(-20_in, DRIVE_SPEED_LOW-15);
   chassis.pid_wait();
   Intake_Conveyor(200);
 
-  // chassis.pid_drive_set(-17_in, DRIVE_SPEED_2);
+  // chassis.pid_drive_set(-17_in, DRIVE_SPEED_LOW);
   // chassis.pid_wait();
   // chassis.pid_turn_set(150_deg, TURN_SPEED);
   // chassis.pid_wait();
-  // chassis.pid_drive_set(10_in, DRIVE_SPEED_2);
+  // chassis.pid_drive_set(10_in, DRIVE_SPEED_LOW);
   // ladybrown.move_relative(2000, 150);
   // chassis.pid_turn_set(25_deg, TURN_SPEED);
   // chassis.pid_wait();
-  // chassis.pid_drive_set(24_in, DRIVE_SPEED_1);
+  // chassis.pid_drive_set(24_in, DRIVE_SPEED_HIGH);
   // chassis.pid_wait();
   // chassis.pid_turn_set(-65_deg, TURN_SPEED);
   // chassis.pid_wait();
-  // chassis.pid_drive_set(-10_in, DRIVE_SPEED_2);
+  // chassis.pid_drive_set(-10_in, DRIVE_SPEED_LOW);
   // chassis.pid_wait();
   // chassis.pid_turn_set(-155_deg, TURN_SPEED);
   // Intake_Conveyor(200);
@@ -851,10 +847,10 @@ void red_right_ver_8(){
   //doinker = 10_in
   //3-4
   mogo.set(false); //lift the piston
-  chassis.pid_drive_set(-25_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(-25_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   //move backward 5 inches and grasp the mobile goal
-  // chassis.pid_drive_set(-5_in, DRIVE_SPEED_2);
+  // chassis.pid_drive_set(-5_in, DRIVE_SPEED_LOW);
 
   // chassis.pid_wait();
   mogo.set(true); //piston down
@@ -863,24 +859,24 @@ void red_right_ver_8(){
   pros::delay(800);
   Intake_Conveyor(0);  
   chassis.pid_wait();
-  chassis.pid_drive_set(-6_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(-6_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   chassis.pid_turn_set(-65_deg, TURN_SPEED);
   chassis.pid_wait();
   Intake_Conveyor(200);
   chassis.pid_wait();
-  chassis.pid_drive_set(30_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(30_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait();
   pros::delay(300);
   chassis.pid_turn_set(115_deg, TURN_SPEED);
   chassis.pid_wait();
   mogo.set(false);
   pros::delay(100);
-  chassis.pid_drive_set(30_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(30_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   chassis.pid_turn_set(62_deg, TURN_SPEED);
   chassis.pid_wait();
-  chassis.pid_drive_set(19_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(19_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait();
   doinker_pneumatic.set(true);
   pros::delay(200);
@@ -891,17 +887,17 @@ void red_right_ver_8(){
   chassis.pid_turn_set(115_deg, TURN_SPEED);
   chassis.pid_wait();
   Intake_Conveyor(50);
-  chassis.pid_drive_set(15_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(15_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   Intake_Conveyor(200);
-  chassis.pid_drive_set(-17_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(-17_in, DRIVE_SPEED_LOW);
   chassis.pid_turn_set(25_deg, TURN_SPEED);
   chassis.pid_wait();
-  chassis.pid_drive_set(24_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(24_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait();
   chassis.pid_turn_set(-65_deg, TURN_SPEED);
   chassis.pid_wait();
-  chassis.pid_drive_set(-10_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(-10_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   chassis.pid_turn_set(-155_deg, TURN_SPEED);
   Intake_Conveyor(200);
@@ -911,59 +907,120 @@ void red_right_ver_8(){
 
 void red_right_ver_9(){
   Intake_Conveyor(50);
-  chassis.pid_drive_set(34_in, DRIVE_SPEED_1-10);
+  chassis.pid_drive_set(40_in, DRIVE_SPEED_HIGH-10);
   chassis.pid_wait();
   Intake_Conveyor(0);
-  chassis.pid_drive_set(-4_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(-4_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
-  chassis.pid_turn_set(-47_deg, TURN_SPEED);
+  chassis.pid_turn_set(-43_deg, TURN_SPEED);
   chassis.pid_wait();
-  chassis.pid_drive_set(16_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(14_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   doinker_pneumatic.set(true);
-  chassis.pid_drive_set(-20_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(-20_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   doinker_pneumatic.set(false);
   pros::delay(150);
-  chassis.pid_turn_set(133_deg, TURN_SPEED);
+  chassis.pid_turn_set(137_deg, TURN_SPEED);
   chassis.pid_wait();
-  chassis.pid_drive_set(28_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(-28_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   mogo.set(true);
   Intake_Conveyor(200);
+  chassis.pid_drive_set(7_in, DRIVE_SPEED_LOW-20);
+  chassis.pid_wait();
+  mogo.set(false);
+  Intake_Conveyor(0);
+  chassis.pid_turn_set(60_deg, TURN_SPEED);
+  chassis.pid_wait();
+  Intake_Conveyor(75);
+  chassis.pid_drive_set(13_in, DRIVE_SPEED_HIGH);
+  chassis.pid_wait();
+  Intake_Conveyor(0);
+  chassis.pid_drive_set(-34_in, DRIVE_SPEED_LOW);
+  chassis.pid_wait();
+  mogo.set(true);
+  Intake_Conveyor(200);
+  chassis.pid_turn_set(-120_deg, TURN_SPEED);
+  chassis.pid_wait();
+  chassis.pid_drive_set(23_in, DRIVE_SPEED_HIGH);
+  ladybrown.move_relative(2000, 200);
+
 
 }
-
+// version 2 scoring 4 rings
 void red_left_ver_2(){
-  chassis.pid_drive_set(12_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(-12_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   chassis.pid_turn_set(90_deg, TURN_SPEED);
   chassis.pid_wait();
+  chassis.pid_drive_set(-3_in, DRIVE_SPEED_LOW);
+  chassis.pid_wait();
   Intake_Conveyor(200);
   pros::delay(400);
+
+  chassis.pid_drive_set(3_in, DRIVE_SPEED_LOW);
+  chassis.pid_wait();
   chassis.pid_turn_set(-125_deg,TURN_SPEED);
   chassis.pid_wait();
-  chassis.pid_drive_set(33_in, DRIVE_SPEED_1-10);
+  chassis.pid_drive_set(33_in, DRIVE_SPEED_HIGH-10);
   chassis.pid_wait();
   mogo.set(true);
+
   chassis.pid_turn_set(0_deg, TURN_SPEED);
   chassis.pid_wait();
-  chassis.pid_drive_set(26_in, DRIVE_SPEED_2+10);
+  chassis.pid_drive_set(26_in, DRIVE_SPEED_LOW+10);
   chassis.pid_wait();
   Intake_Conveyor(0);
   chassis.pid_turn_set(90_deg, TURN_SPEED);
   chassis.pid_wait();
   Intake_Conveyor(150);
-  chassis.pid_drive_set(21_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(21_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
-  chassis.pid_drive_set(-21_in, DRIVE_SPEED_2);
+  chassis.pid_drive_set(-21_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   chassis.pid_swing_set(RIGHT_SWING, 28, 80);
   chassis.pid_wait();
-  chassis.pid_drive_set(-15_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(-15_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait();
   chassis.pid_turn_set(180_deg, TURN_SPEED);
-  chassis.pid_drive_set(35_in, DRIVE_SPEED_1);
+  chassis.pid_drive_set(35_in, DRIVE_SPEED_HIGH);
+  ladybrown.move_relative(2000, 150);
+
+}
+// version 2 scoring 3 rings
+void red_left_ver_3(){
+  chassis.pid_drive_set(-12_in, DRIVE_SPEED_LOW);
+  chassis.pid_wait();
+  chassis.pid_turn_set(90_deg, TURN_SPEED);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-3_in, DRIVE_SPEED_LOW);
+  chassis.pid_wait();
+  Intake_Conveyor(200);
+  pros::delay(400);
+  
+  chassis.pid_drive_set(3_in, DRIVE_SPEED_LOW);
+  chassis.pid_wait();
+  chassis.pid_turn_set(-125_deg,TURN_SPEED);
+  chassis.pid_wait();
+  chassis.pid_drive_set(33_in, DRIVE_SPEED_HIGH-10);
+  chassis.pid_wait();
+  mogo.set(true);
+
+  chassis.pid_turn_set(0_deg, TURN_SPEED);
+  chassis.pid_wait();
+  chassis.pid_drive_set(26_in, DRIVE_SPEED_LOW+10);
+  chassis.pid_wait();
+  Intake_Conveyor(0);
+  chassis.pid_turn_set(90_deg, TURN_SPEED);
+  chassis.pid_wait();
+  Intake_Conveyor(150);
+  chassis.pid_drive_set(21_in, DRIVE_SPEED_LOW);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-15_in, DRIVE_SPEED_LOW);
+  chassis.pid_wait();
+  chassis.pid_turn_set(180_deg, TURN_SPEED);
+  chassis.pid_drive_set(35_in, DRIVE_SPEED_HIGH);
   ladybrown.move_relative(2000, 150);
 
 }

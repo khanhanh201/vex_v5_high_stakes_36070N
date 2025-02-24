@@ -25,3 +25,4 @@ void red_right_ver_7();//Alliance wall stake
 void red_right_ver_8();
 void red_right_ver_9();
 void red_left_ver_2();
+void red_left_ver_3();
