@@ -944,7 +944,7 @@ void red_right_ver_9(){
   chassis.pid_turn_set(-120_deg, TURN_SPEED);
   chassis.pid_wait();
   chassis.pid_drive_set(23_in, DRIVE_SPEED_HIGH);
-  ladybrown.move_relative(2000, 200);
+  ladybrown.move_relative(2000, 150);
 
 
 }
