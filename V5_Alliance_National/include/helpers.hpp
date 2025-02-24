@@ -1,5 +1,8 @@
 #include "main.h"
 
+
+//vision
+extern pros::Vision vision_sensor;
 //rotation
 extern pros::Rotation rotation_sensor;
 

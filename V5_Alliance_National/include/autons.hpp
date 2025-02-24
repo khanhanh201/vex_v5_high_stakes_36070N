@@ -19,3 +19,9 @@ void test_ACE();
 void red_right_ver_2();
 void red_right_ver_4();
 void red_right_ver_3();
+void red_right_ver_5();//No alliance wall stake
+void red_right_ver_6();
+void red_right_ver_7();//Alliance wall stake
+void red_right_ver_8();
+void red_right_ver_9();
+void red_left_ver_2();
