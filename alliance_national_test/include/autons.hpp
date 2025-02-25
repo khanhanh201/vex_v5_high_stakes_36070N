@@ -3,12 +3,7 @@
 void default_constants();
 
 
-void negative_red();
-void negative_blue();
-void positive_red();
-void positive_blue();
-
-void test_ACE();
-void my_test();
-void red_right();
-void red_right_ver_2();
+void huyanh_red_pos_1();
+void huyanh_red_pos_2();
+void huyanh_blue_pos_1();
+void huyanh_blue_pos_2();

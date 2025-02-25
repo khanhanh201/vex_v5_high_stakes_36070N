@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "blue sort",
+    "project_name": "huyanh",
     "target": "v5",
     "templates": {
       "EZ-Template": {
@@ -425,7 +425,7 @@
     },
     "upload_options": {
       "description": "roboticsisez.com",
-      "slot": 6,
+      "slot": 3,
       "icon": "ufo"
     },
     "use_early_access": false

@@ -91,17 +91,16 @@ void vision_task()
       largest_object = vision_sensor.get_by_sig(0, 1); //blue_signature
       vision_sensor.clear_led();
 
-      pros::lcd::set_text(1, std::to_string(largest_object.width));
-      pros::lcd::set_text(2, std::to_string(largest_object.height));
-
       //width:260, height 200
-      if (vision_sensor.get_object_count() > 0 && largest_object.width > 220 && largest_object.height > 175 && intake_motor.get_actual_velocity() > 1)
+      if (vision_sensor.get_object_count() > 0 && largest_object.width > 230 && largest_object.height > 170 && intake_motor.get_actual_velocity() > 1)
       {
+        pros::lcd::set_text(1, std::to_string(largest_object.width));
+        pros::lcd::set_text(2, std::to_string(largest_object.height));
         pros::lcd::set_text(7, "blue ring seen");
         master.rumble("-");
-        pros::delay(65);
+        pros::delay(75);
         direction = -1;
-        pros::delay(200);
+        pros::delay(250);
         direction = 1;
         pros::delay(700);
       }
@@ -118,12 +117,11 @@ void vision_task()
       largest_object = vision_sensor.get_by_sig(0, 2); //red_signature
       vision_sensor.clear_led();
 
-      pros::lcd::set_text(1, std::to_string(largest_object.width));
-      pros::lcd::set_text(2, std::to_string(largest_object.height));
-
       //width:316, height 212
       if (vision_sensor.get_object_count() > 0 && largest_object.width > 220 && largest_object.height > 190 && intake_motor.get_actual_velocity() > 1)
       {
+        pros::lcd::set_text(1, std::to_string(largest_object.width));
+        pros::lcd::set_text(2, std::to_string(largest_object.height));
         pros::lcd::set_text(7, "red ring seen");
         pros::delay(47);
         master.rumble("-");
@@ -139,7 +137,7 @@ void vision_task()
   }
   pros::delay(ez::util::DELAY_TIME);
 }
-pros::Task my_Vision_Task(vision_task);
+pros::Task Vision_Task(vision_task);
 
 
 
@@ -205,7 +203,9 @@ void autonomous() {
   chassis.odom_xyt_set(0_in, 0_in, 0_deg);    // Set the current position, you can start at a specific position with this
   chassis.drive_brake_set(MOTOR_BRAKE_HOLD);  // Set motors to hold.  This helps autonomous consistency
 
-  red_right_ver_2();
+  huyanh_red_pos_1();
+  //huyanh_blue_pos_1();
+  //huyanh_blue_pos_2();
 }
 
 
@@ -240,8 +240,9 @@ void opcontrol() {
     // mogo
     Mogo(master.get_digital(DIGITAL_X));
 
-    // lift intake
-    Lift(master.get_digital(DIGITAL_B));
+    // hang
+    Right_hang(master.get_digital(DIGITAL_B));
+    Left_hang(master.get_digital(DIGITAL_Y));
 
     // doinker pneumatics
     Doinker(master.get_digital(DIGITAL_A));

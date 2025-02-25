@@ -18,9 +18,12 @@ void Ladybrown(int ladybrown_power);
 extern ez::Piston mogo;
 void Mogo (bool check);
 
-// lift intake
-extern ez::Piston lift_pneumatic;
-void Lift (bool check);
+// hang
+extern ez::Piston right_hang;
+void Right_hang (bool check);
+
+extern ez::Piston left_hang;
+void Left_hang (bool check);
 
 // doinker
 extern ez::Piston doinker_pneumatic;

@@ -30,13 +30,17 @@ void Mogo (bool check) {
     mogo.button_toggle(check);
 }
 
-// lift intake
-// true = up
-// false = down
-ez::Piston lift_pneumatic('B', false);
+// hang pneumatic
+// true = hang
+// false = normal
+ez::Piston right_hang('B', true);
+void Right_hang (bool check) {
+    right_hang.button_toggle(check);
+}
 
-void Lift (bool check) {
-    lift_pneumatic.button_toggle(check);
+ez::Piston left_hang('D', true);
+void Left_hang (bool check) {
+    left_hang.button_toggle(check);
 }
 
 // corner pneumatics
