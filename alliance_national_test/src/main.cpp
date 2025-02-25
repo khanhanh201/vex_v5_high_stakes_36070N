@@ -1,7 +1,7 @@
 #include "main.h"
 
 //ladybrown macros
-#define ladybrown_angle 19
+#define ladybrown_angle 28
 #define ladybrown_deadband 2
 #define ladybrown_time_count 10
 
@@ -155,6 +155,7 @@ void display_task()
 pros::Task Display_Task(display_task);
 
 
+
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -181,6 +182,7 @@ void initialize() {
   rotation_sensor.reset_position();
   rotation_sensor.set_reversed(true);
   intake_motor.tare_position();
+  mogo.set(false);
 
   master.rumble(chassis.drive_imu_calibrated() ? "." : "---");
 }
@@ -230,7 +232,7 @@ void opcontrol() {
 
     if (manual_ladybrown) 
     {
-      if (((double)(rotation_sensor.get_position())/100) > 135) Ladybrown(master.get_digital(DIGITAL_R2)*(-200));
+      if (((double)(rotation_sensor.get_position())/100) > 140) Ladybrown(master.get_digital(DIGITAL_R2)*(-200));
       else
       {
         Ladybrown((master.get_digital(DIGITAL_R1) - master.get_digital(DIGITAL_R2))*200);
@@ -239,10 +241,9 @@ void opcontrol() {
 
     // mogo
     Mogo(master.get_digital(DIGITAL_X));
-
+ 
     // hang
-    Right_hang(master.get_digital(DIGITAL_B));
-    Left_hang(master.get_digital(DIGITAL_Y));
+    Hang(master.get_digital(DIGITAL_B));
 
     // doinker pneumatics
     Doinker(master.get_digital(DIGITAL_A));

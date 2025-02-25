@@ -33,13 +33,10 @@ void Mogo (bool check) {
 // hang pneumatic
 // true = hang
 // false = normal
-ez::Piston right_hang('B', true);
-void Right_hang (bool check) {
+ez::Piston right_hang('B', false);
+ez::Piston left_hang('E', false);
+void Hang (bool check) {
     right_hang.button_toggle(check);
-}
-
-ez::Piston left_hang('D', true);
-void Left_hang (bool check) {
     left_hang.button_toggle(check);
 }
 

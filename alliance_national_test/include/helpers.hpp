@@ -20,10 +20,8 @@ void Mogo (bool check);
 
 // hang
 extern ez::Piston right_hang;
-void Right_hang (bool check);
-
 extern ez::Piston left_hang;
-void Left_hang (bool check);
+void Hang (bool check);
 
 // doinker
 extern ez::Piston doinker_pneumatic;
