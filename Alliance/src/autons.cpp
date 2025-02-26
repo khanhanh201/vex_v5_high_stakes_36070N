@@ -94,84 +94,10 @@ void negative_red() {
   chassis.pid_wait_quick_chain();
   chassis.pid_drive_set(40_in, 110);
   chassis.pid_wait_quick_chain();
-
-  /*
-  chassis.pid_drive_set(-20_in, 110);
-  chassis.pid_wait_quick_chain();
-  chassis.pid_turn_set(-90_deg, 90);
-  chassis.pid_wait_quick_chain();
-  chassis.pid_drive_set(10_in, 110);
-  chassis.pid_wait();
-  chassis.pid_turn_set(0_deg, 110);
-  chassis.pid_wait_quick_chain();
-  chassis.pid_drive_set(10_in, 110);
-  chassis.pid_wait();
-
-  chassis.pid_turn_set(90_deg, 110);
-  chassis.pid_wait_quick_chain();
-  chassis.pid_drive_set(30_in, 110);
-  ladybrown.move_absolute(150, 100);
-  chassis.pid_wait();
-  chassis.pid_turn_set(180_deg, 110);
-  ladybrown.move_absolute(0, 100);
-  chassis.pid_wait_quick_chain();
-  chassis.pid_drive_set(30_in, 110);
-  chassis.pid_wait();
-  Intake_Conveyor(0);
-  chassis.pid_turn_set(-90_deg, 110);
-  chassis.pid_wait_quick_chain();
-
-  chassis.pid_drive_set(-10_in, 110);
-  chassis.pid_wait_quick_chain();
-  chassis.pid_turn_set(0_deg, 90);
-  chassis.pid_wait_quick_chain(); 
-  Intake_Conveyor(200); 
-  chassis.pid_drive_set(-6_in, 110);
-  chassis.pid_wait();
-  */
-  
-
-
-  /*
-  chassis.drive_angle_set(-90_deg);  
-
-  chassis.pid_drive_set(-10_in, 110);
-  chassis.pid_wait_quick_chain();
-  chassis.pid_turn_set(0_deg, 90);
-  chassis.pid_wait_quick_chain(); 
-  Intake_Conveyor(200); 
-  chassis.pid_drive_set(-6_in, 110);
-  chassis.pid_wait();
-  
-  
-  chassis.pid_drive_set(6_in, 110);
-  chassis.pid_wait_quick_chain();
-  Intake_Conveyor(0);
-  chassis.pid_turn_set(135_deg, 110);
-  chassis.pid_wait_quick_chain();
-  chassis.pid_drive_set(-21_in, 110);
-  chassis.pid_wait_quick_chain();
-  chassis.pid_drive_set(-6_in, 90);
-  chassis.pid_wait_quick_chain();
-  mogo.set(true);
-  pros::delay(500);
-
-  chassis.pid_turn_set(-90_deg, 110);
-  chassis.pid_wait_quick_chain();
-  chassis.pid_drive_set(5_in, 110);
-  chassis.pid_wait_quick_chain();
-  chassis.pid_swing_set(ez::LEFT_SWING, -20_deg, 95, 48);
-  Intake_Conveyor(200);
-  chassis.pid_wait();
-  pros::delay(500);
-  */
 }
-
-
 
 void huyanh_red_pos_1()
 {
-  //run intake for a short time
   Intake_Conveyor(50);
   pros::delay(100);
   Intake_Conveyor(0);
@@ -179,7 +105,7 @@ void huyanh_red_pos_1()
   //move backward and turn to score alliance stake
   chassis.drive_angle_set(90_deg);
   mogo.set(false);
-  chassis.pid_drive_set(-8.7_in, DRIVE_SPEED);
+  chassis.pid_drive_set(-8.8_in, DRIVE_SPEED);
   chassis.pid_wait_quick_chain();
   chassis.pid_turn_set(0_deg, TURN_SPEED);
   chassis.pid_wait_quick_chain();
@@ -207,45 +133,13 @@ void huyanh_red_pos_1()
   chassis.pid_wait_quick_chain();
   chassis.pid_drive_set(29_in, DRIVE_SPEED);
   chassis.pid_wait();
-  pros::delay(300);
+  pros::delay(1000);
 
-  //go touch the hang
+  //touch the hang
   chassis.pid_turn_set(-90_deg, TURN_SPEED);
-  chassis.pid_wait();
-  chassis.pid_drive_set(36.5_in, DRIVE_SPEED);
-  chassis.pid_wait();
-  Intake_Conveyor(0);
-
-  //move backward and go to the corner
-  chassis.pid_drive_set(-10_in, DRIVE_SPEED);
-  chassis.pid_wait_quick_chain();
-  chassis.pid_turn_set(150_deg, TURN_SPEED, ez::ccw);
   chassis.pid_wait_quick_chain();
   chassis.pid_drive_set(35_in, DRIVE_SPEED);
-  chassis.pid_wait_quick_chain();
-  chassis.pid_turn_set(90_deg, TURN_SPEED);
-  chassis.pid_wait_quick_chain();
-  chassis.pid_drive_set(35_in, DRIVE_SPEED);
-  chassis.pid_wait_quick_chain();
-}
-
-
-void huyanh_red_pos_2()
-{
-  mogo.set(true);
-  Intake_Conveyor(200);
-  chassis.pid_drive_set(24_in, DRIVE_SPEED);
-  chassis.pid_wait_quick_chain();
-  Intake_Conveyor(0);
-  chassis.pid_turn_set(-45_deg, TURN_SPEED, ez::ccw);
-  chassis.pid_wait_quick_chain();
-  chassis.pid_drive_set(6_in, DRIVE_SPEED);
-  chassis.pid_wait_quick_chain();
-  doinker_pneumatic.set(true);
-  chassis.pid_drive_set(-10_in, 40);
-  chassis.pid_wait_quick_chain();
-  chassis.pid_turn_set(150_deg, TURN_SPEED);
-  chassis.pid_wait_quick_chain();
+  chassis.pid_wait();
 }
 
 void huyanh_blue_pos_1()
@@ -284,31 +178,204 @@ void huyanh_blue_pos_1()
   pros::delay(200);
   chassis.pid_turn_set(-85_deg, TURN_SPEED, ez::cw);
   chassis.pid_wait_quick_chain();
-  chassis.pid_drive_set(29_in, DRIVE_SPEED);
+  chassis.pid_drive_set(25_in, DRIVE_SPEED);
   chassis.pid_wait();
-  pros::delay(500);
+  pros::delay(1000);
+
+  //touch the hang
+  chassis.pid_drive_set(-25_in, DRIVE_SPEED);
+  chassis.pid_wait();
+  Intake_Conveyor(0);
+  chassis.pid_turn_set(95_deg, TURN_SPEED);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(10_in, DRIVE_SPEED);
+  chassis.pid_wait();
+}
+
+void huyanh_blue_pos_2()
+{
+  //rush to the mobile goal and take in the ring
+  chassis.drive_angle_set(-30_deg);
+  Intake_Conveyor(200);
+  chassis.pid_drive_set(36_in, DRIVE_SPEED);
+  chassis.pid_wait_until(35);
+
+  //grab the mobile goal and move back slowly
+  doinker_pneumatic.set(true);
+  Intake_Conveyor(0);
+  chassis.pid_wait();
+  pros::delay(200);
+  chassis.pid_drive_set(-10_in, 35);
+  chassis.pid_wait_quick_chain();
+  doinker_pneumatic.set(false);
+
+  //turn and score into the mobile goal and move forward
+  chassis.pid_turn_set(170_deg, TURN_SPEED, ez::cw);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(-12_in, SLOW_DRIVE_SPEED);
+  chassis.pid_wait();
+  mogo.set(true);
+  Intake_Conveyor(200);
+  pros::delay(100);
+  chassis.pid_drive_set(6_in, DRIVE_SPEED);
+  chassis.pid_wait();
+
+  //release the mobile goal and grab the other one
+  mogo.set(false);
+  chassis.pid_turn_set(-97_deg, TURN_SPEED, ez::cw);
+  chassis.pid_wait_quick_chain();
+  Intake_Conveyor(0);
+  chassis.pid_drive_set(-13_in, SLOW_DRIVE_SPEED);
+  chassis.pid_wait();
+  mogo.set(true);
+  pros::delay(100);
+
+  //turn and take in the preload ring
+  chassis.pid_turn_set(145, TURN_SPEED, ez::ccw);
+  chassis.pid_wait_quick_chain();
+  Intake_Conveyor(200);
+  chassis.pid_drive_set(20_in, DRIVE_SPEED);
+  chassis.pid_wait();
 
   //go touch the hang
+  chassis.pid_turn_set(45, TURN_SPEED, ez::ccw);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(17.5_in, DRIVE_SPEED);
+  chassis.pid_wait_quick_chain();
+  Intake_Conveyor(0);
+}
+
+void huyanh_red_pos_1_test()
+{
+  //run intake for a short time
+  Intake_Conveyor(50);
+  pros::delay(100);
+  Intake_Conveyor(0);
+
+  //move backward and turn to score alliance stake
+  chassis.drive_angle_set(90_deg);
+  mogo.set(false);
+  chassis.pid_drive_set(-8.8_in, DRIVE_SPEED);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_turn_set(0_deg, TURN_SPEED);
+  chassis.pid_wait_quick_chain();
+  Intake_Conveyor(200);
+  chassis.pid_drive_set(-0.1_in, DRIVE_SPEED);
+  chassis.pid_wait_quick_chain();
+  pros::delay(500);
+
+  //move to the mobile goal
+  chassis.pid_swing_set(ez::LEFT_SWING, 42_deg, SWING_SPEED);
+  chassis.pid_wait_quick_chain();
+  Intake_Conveyor(0);
+  chassis.pid_turn_set(-145_deg, TURN_SPEED);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(-28_in, DRIVE_SPEED);
+  chassis.pid_wait_quick_chain();
+  Intake_Conveyor(200);
+  chassis.pid_drive_set(-4.5_in, SLOW_DRIVE_SPEED);
+  chassis.pid_wait();
+
+  //grab the mobile goal and take in the ring
+  mogo.set(true);
+  pros::delay(200);
+  chassis.pid_turn_set(75_deg, TURN_SPEED);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(29_in, DRIVE_SPEED);
+  chassis.pid_wait();
+  pros::delay(300);
+
+  //go to the corner
+  chassis.pid_drive_set(-25_in, DRIVE_SPEED);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_turn_set(135_deg, TURN_SPEED);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(35_in, DRIVE_SPEED);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_turn_set(120_deg, TURN_SPEED);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(8_in, DRIVE_SPEED);
+  chassis.pid_wait_quick_chain();
+
+  //sweep the corner, take in a ring and touch the hang
+  doinker_pneumatic.set(true);
+  chassis.pid_turn_set(-70_deg, TURN_SPEED, ez::ccw);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(40_in, DRIVE_SPEED);
+  chassis.pid_wait_quick_chain();
+  Intake_Conveyor(0);
+  doinker_pneumatic.set(false);
+  chassis.pid_turn_set(-20_deg, TURN_SPEED, ez::cw);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(10_in, DRIVE_SPEED);
+  chassis.pid_wait_quick_chain();
+}
+
+
+void huyanh_blue_pos_1_test()
+{
+  //run intake for a short time
+  Intake_Conveyor(50);
+  pros::delay(100);
+  Intake_Conveyor(0);
+
+  //move backward and turn to score alliance stake
+  chassis.drive_angle_set(-90_deg);
+  mogo.set(false);
+  chassis.pid_drive_set(-8.4_in, DRIVE_SPEED);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_turn_set(0_deg, TURN_SPEED);
+  chassis.pid_wait_quick_chain();
+  Intake_Conveyor(200);
+  chassis.pid_drive_set(-0.9_in, DRIVE_SPEED);
+  chassis.pid_wait_quick_chain();
+  pros::delay(500);
+
+  //move to the mobile goal
+  chassis.pid_drive_set(2_in, DRIVE_SPEED);
+  chassis.pid_wait_quick_chain();
+  Intake_Conveyor(0);
+  chassis.pid_turn_set(140_deg, TURN_SPEED, ez::cw);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(-27.5_in, DRIVE_SPEED);
+  chassis.pid_wait_quick_chain();
+  Intake_Conveyor(200);
+  chassis.pid_drive_set(-4_in, SLOW_DRIVE_SPEED);
+  chassis.pid_wait();
+
+  //grab the mobile goal and take in the ring
+  mogo.set(true);
+  pros::delay(200);
+  chassis.pid_turn_set(-85_deg, TURN_SPEED, ez::cw);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(25_in, DRIVE_SPEED);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_turn_set(-165_deg, TURN_SPEED, ez::ccw);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(27_in, DRIVE_SPEED);
+  chassis.pid_wait_until(15_in);
+  doinker_pneumatic.set(true);
+  chassis.pid_wait_quick_chain();
+  Intake_Conveyor(0);
+
+  //go and sweep the corner
+  chassis.pid_turn_set(30_deg, TURN_SPEED, ez::ccw);
+  chassis.pid_wait_quick_chain();
+  Intake_Conveyor(200);
+  chassis.pid_drive_set(30_in, DRIVE_SPEED);
+  chassis.pid_wait_quick_chain();
+  doinker_pneumatic.set(false);
+
+  //go touch the hang
+  chassis.pid_drive_set(-10_in, DRIVE_SPEED);
+  chassis.pid_wait_quick_chain();
   chassis.pid_turn_set(90_deg, TURN_SPEED);
   chassis.pid_wait_quick_chain();
   chassis.pid_drive_set(30_in, DRIVE_SPEED);
   chassis.pid_wait_quick_chain();
-  Intake_Conveyor(0);
-
-  //move backward and go to the corner
-  chassis.pid_drive_set(-10_in, DRIVE_SPEED);
-  chassis.pid_wait_quick_chain();
-  chassis.pid_turn_set(-90_deg, TURN_SPEED);
-  chassis.pid_wait_quick_chain();
-  chassis.pid_drive_set(44_in, DRIVE_SPEED);
-  chassis.pid_wait_quick_chain();
-  chassis.pid_turn_set(-135_deg, TURN_SPEED, ez::ccw);
-  chassis.pid_wait_quick_chain();
-  chassis.pid_drive_set(25_in, DRIVE_SPEED);
-  chassis.pid_wait_quick_chain();
 }
 
-void huyanh_blue_pos_2()
+void huyanh_blue_pos_2_test()
 {
   //rush to the mobile goal and take in the ring
   chassis.drive_angle_set(-30_deg);

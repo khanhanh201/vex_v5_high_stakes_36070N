@@ -205,9 +205,13 @@ void autonomous() {
   chassis.odom_xyt_set(0_in, 0_in, 0_deg);    // Set the current position, you can start at a specific position with this
   chassis.drive_brake_set(MOTOR_BRAKE_HOLD);  // Set motors to hold.  This helps autonomous consistency
 
-  huyanh_red_pos_1();
+  //huyanh_red_pos_1();
   //huyanh_blue_pos_1();
   //huyanh_blue_pos_2();
+
+  //huyanh_red_pos_1_test();
+  //huyanh_blue_pos_1_test();
+  //huyanh_blue_pos_2_test();
 }
 
 
