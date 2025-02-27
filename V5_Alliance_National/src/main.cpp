@@ -1,7 +1,7 @@
 #include "main.h"
 
 //ladybrown macros
-#define ladybrown_angle 19
+#define ladybrown_angle 28
 #define ladybrown_deadband 2
 #define ladybrown_time_count 10
 
@@ -205,7 +205,7 @@ void autonomous() {
   chassis.odom_xyt_set(0_in, 0_in, 0_deg);    // Set the current position, you can start at a specific position with this
   chassis.drive_brake_set(MOTOR_BRAKE_HOLD);  // Set motors to hold.  This helps autonomous consistency
 
-  blue_left_ver_2();
+  red_left_ver_2();
 }
 
 

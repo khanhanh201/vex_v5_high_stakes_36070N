@@ -996,3 +996,48 @@ void blue_left_ver_2(){
   chassis.pid_drive_set(32_in, 70);
   ladybrown.move_relative(2000, 150);
 }
+
+void red_left_ver_2(){
+  mogo.set(true);
+  chassis.pid_drive_set(-8.6_in, DRIVE_SPEED_LOW);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_turn_set(92_deg, TURN_SPEED);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(-0.3_in, DRIVE_SPEED_LOW);
+  chassis.pid_wait_quick_chain(); 
+  Intake_Conveyor(200);
+  pros::delay(700);
+
+  chassis.pid_drive_set(1.2_in, DRIVE_SPEED_LOW);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_turn_set(-130_deg,TURN_SPEED); 
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(-35.3_in, 90); 
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(-3.5, 70);
+  chassis.pid_wait();
+  mogo.set(false); 
+  pros::delay(700);
+
+  chassis.pid_turn_set(0_deg, TURN_SPEED);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(25.5_in, DRIVE_SPEED_LOW);
+  chassis.pid_wait();
+  pros::delay(500);
+  chassis.pid_turn_set(92_deg, TURN_SPEED); 
+  chassis.pid_wait();
+  chassis.pid_drive_set(14_in, 60);
+  chassis.pid_wait();
+  pros::delay(600);
+  chassis.pid_drive_set(-10.5_in, 78);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_turn_set(74_deg, TURN_SPEED);  
+  chassis.pid_wait();
+  chassis.pid_drive_set(14.9_in, 65);
+  chassis.pid_wait();
+  pros::delay(700);
+  chassis.pid_turn_set(190_deg, TURN_SPEED);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(35_in, DRIVE_SPEED_HIGH);
+  chassis.pid_wait();
+}
