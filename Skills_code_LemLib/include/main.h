@@ -35,7 +35,6 @@
 #define PROS_USE_LITERALS
 
 #include "api.h"
-#include "autons.hpp"
 #include "my_custom_PID.hpp"
 
 /**

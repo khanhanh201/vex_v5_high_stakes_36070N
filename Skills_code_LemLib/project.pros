@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "LemLib",
+    "project_name": "Skills 2 odom",
     "target": "v5",
     "templates": {
       "LemLib": {
@@ -299,8 +299,8 @@
     },
     "upload_options": {
       "description": "huyanh says hello to you",
-      "slot": 4,
-      "icon": "power"
+      "slot": 1,
+      "icon": "alien"
     },
     "use_early_access": false
   }
