@@ -23,7 +23,10 @@ void red_right_ver_5();//No alliance wall stake
 void red_right_ver_6();
 void red_right_ver_7();//Alliance wall stake
 void red_right_ver_8();
-void red_right_ver_9();
-void red_right_ver_10();
-void blue_left_ver_2();
-void red_left_ver_2();
+void red_right_goal_rush();
+void blue_left_goal_rush();
+void blue_right_main();
+void red_left_main();
+void red_right_wall_stake();
+void blue_left_wall_stake();
+void red_right_goal_rush_ver_2();

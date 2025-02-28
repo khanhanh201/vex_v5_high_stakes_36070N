@@ -1,8 +1,8 @@
 #include "main.h"
 
 //ladybrown macros
-#define ladybrown_angle 28
-#define ladybrown_deadband 2
+#define ladybrown_angle 18
+#define ladybrown_deadband 1.75
 #define ladybrown_time_count 10
 
 
@@ -95,15 +95,15 @@ void vision_task()
       pros::lcd::set_text(2, std::to_string(largest_object.height));
 
       //width:260, height 200
-      if (vision_sensor.get_object_count() > 0 && largest_object.width > 220 && largest_object.height > 175 && intake_motor.get_actual_velocity() > 1)
+      if (vision_sensor.get_object_count() > 0 && largest_object.width > 230 && largest_object.height > 180 && intake_motor.get_actual_velocity() > 1)
       {
         pros::lcd::set_text(7, "blue ring seen");
         master.rumble("-");
-        pros::delay(65);
+        pros::delay(70);
         direction = -1;
         pros::delay(200);
         direction = 1;
-        pros::delay(700);
+        pros::delay(500);
       }
       else pros::lcd::set_text(7, "blue ring not seen");
 
@@ -122,15 +122,15 @@ void vision_task()
       pros::lcd::set_text(2, std::to_string(largest_object.height));
 
       //width:316, height 212
-      if (vision_sensor.get_object_count() > 0 && largest_object.width > 220 && largest_object.height > 190 && intake_motor.get_actual_velocity() > 1)
+      if (vision_sensor.get_object_count() > 0 && largest_object.width > 230 && largest_object.height > 180 && intake_motor.get_actual_velocity() > 1)
       {
         pros::lcd::set_text(7, "red ring seen");
-        pros::delay(47);
+        pros::delay(70);
         master.rumble("-");
         direction = -1;
-        pros::delay(200);
+        pros::delay(170);
         direction = 1;
-        pros::delay(700);
+        pros::delay(500);
       }
       else pros::lcd::set_text(7, "red ring not seen");
 
@@ -183,6 +183,7 @@ void initialize() {
   rotation_sensor.reset_position();
   rotation_sensor.set_reversed(true);
   intake_motor.tare_position();
+  mogo.set(true);
 
   master.rumble(chassis.drive_imu_calibrated() ? "." : "---");
 }
@@ -205,7 +206,7 @@ void autonomous() {
   chassis.odom_xyt_set(0_in, 0_in, 0_deg);    // Set the current position, you can start at a specific position with this
   chassis.drive_brake_set(MOTOR_BRAKE_HOLD);  // Set motors to hold.  This helps autonomous consistency
 
-  red_left_ver_2();
+  red_right_goal_rush_ver_2();
 }
 
 
