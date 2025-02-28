@@ -967,12 +967,12 @@ void blue_right_main(){
   mogo.set(true);
   chassis.pid_drive_set(-8.6_in, DRIVE_SPEED_LOW);
   chassis.pid_wait_quick_chain();
-  chassis.pid_turn_set(-90_deg, TURN_SPEED);
+  chassis.pid_turn_set(-92_deg, TURN_SPEED);
   chassis.pid_wait_quick_chain();
-  chassis.pid_drive_set(-0.7_in, DRIVE_SPEED_LOW);
+  chassis.pid_drive_set(-0.5_in, DRIVE_SPEED_LOW);
   chassis.pid_wait_quick_chain(); 
   Intake_Conveyor(200);
-  pros::delay(400);
+  pros::delay(700);
 
   Intake_Conveyor(200);
   chassis.pid_drive_set(1.2_in, DRIVE_SPEED_LOW);
@@ -993,12 +993,13 @@ void blue_right_main(){
   chassis.pid_drive_set(25.5_in, DRIVE_SPEED_LOW);
   chassis.pid_wait();
   Intake_Conveyor(200);
-  chassis.pid_turn_set(-107_deg, TURN_SPEED); 
+  chassis.pid_turn_set(-92_deg, TURN_SPEED); 
   chassis.pid_wait();
   Intake_Conveyor(200);
-  chassis.pid_drive_set(11.3_in, 60);
+  chassis.pid_drive_set(13.3_in, 60);
   chassis.pid_wait();
   Intake_Conveyor(200);
+  pros::delay(500);
   chassis.pid_drive_set(-10.5_in, 78);
   chassis.pid_wait_quick_chain();
   Intake_Conveyor(200);
@@ -1009,17 +1010,21 @@ void blue_right_main(){
   pros::delay(500);
   chassis.pid_turn_set(180_deg, TURN_SPEED);
   chassis.pid_wait_quick_chain();
-  chassis.pid_drive_set(32_in, 70);
+  chassis.pid_drive_set(32_in, 80);
   ladybrown.move_relative(2000, 150);
 }
 
 void red_left_main(){
+  Intake_Conveyor(200);
+  pros::delay(100);
+  Intake_Conveyor(0);
+
   mogo.set(true);
   chassis.pid_drive_set(-8.6_in, DRIVE_SPEED_LOW);
   chassis.pid_wait_quick_chain();
   chassis.pid_turn_set(92_deg, TURN_SPEED);
   chassis.pid_wait_quick_chain();
-  chassis.pid_drive_set(-0.4_in, DRIVE_SPEED_LOW);
+  chassis.pid_drive_set(-0.5_in, DRIVE_SPEED_LOW);
   chassis.pid_wait_quick_chain(); 
   Intake_Conveyor(200);
   pros::delay(700);
@@ -1059,10 +1064,10 @@ void red_left_main(){
   Intake_Conveyor(200);
   chassis.pid_drive_set(15.2_in, 65);
   chassis.pid_wait();
-  pros::delay(700);
+  pros::delay(900);
   chassis.pid_turn_set(190_deg, TURN_SPEED);
   chassis.pid_wait_quick_chain();
-  chassis.pid_drive_set(38.3_in, DRIVE_SPEED_HIGH);
+  chassis.pid_drive_set(38.9_in, DRIVE_SPEED_HIGH);
   chassis.pid_wait();
 }
 
