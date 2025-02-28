@@ -245,6 +245,7 @@ void competition_initialize() {}
 ASSET(final_path_1_txt);
 ASSET(final_path_2_txt);
 ASSET(final_path_3_txt);
+ASSET(final_path_4_txt);
 
 void autonomous()
 {
@@ -276,10 +277,10 @@ void autonomous()
     //move to the alliance stake
     chassis.moveToPoint(3.75, -45, 800, {.forwards = false});
     chassis.waitUntilDone();
-    ladybrown_target_set(26);
+    ladybrown_target_set(21);
     chassis.turnToHeading(180, 1000);
     chassis.waitUntilDone();
-    chassis.moveToPoint(4, -61, 2000);
+    chassis.moveToPoint(4.2, -61, 2000);
     chassis.waitUntilDone();
     pros::delay(600);
 
@@ -301,32 +302,73 @@ void autonomous()
     pros::delay(400);
 
     //take in the final ring
-    chassis.moveToPose(-44, -64, 135, 1200);
+    chassis.moveToPose(-40, -68, 135, 1200);
     chassis.waitUntilDone();
     pros::delay(500);
 
     //move to the corner
     chassis.moveToPose(-62, -72, -45, 1500, {.forwards = false});
     chassis.waitUntilDone();
-    intake_move(-100);
+    intake_move(-200);
     mogo_move(false);
-    pros::delay(200);
+    pros::delay(500);
     intake_move(0);
 
     //move to the center
-    chassis.moveToPoint(0, 0, 20000);
-    chassis.waitUntil(76);
+    chassis.follow(final_path_3_txt, 20, 20000);
+    chassis.waitUntil(70);
     intake_move(200);
     chassis.waitUntilDone();
+
+    //push the ring
+    chassis.turnToHeading(135, 1000);
+    chassis.waitUntil(10);
     intake_move(0);
-    chassis.moveToPoint(-26, -26, 5000);
+    chassis.waitUntilDone();
+    chassis.moveToPoint(-24, 24, 4000, {.forwards = false, .maxSpeed = 90});
+    chassis.waitUntilDone();
+
+    //go grab the mogo
+    chassis.turnToHeading(90, 800);
+    chassis.waitUntilDone();
+    chassis.moveToPoint(-52, 25, 3000, {.forwards = false, .maxSpeed = 80});
     chassis.waitUntilDone();
     mogo_move(true);
+    pros::delay(500);
 
-    //grab the mogo
-    chassis.follow(final_path_3_txt, 20, 20000);
+    //go pure pursuit and intake rings
+    chassis.turnToHeading(55, 700);
     chassis.waitUntilDone();
-    chassis.moveToPoint(-48.7, 12.6, 10000, {.forwards = false, .maxSpeed = 70});
+    intake_move(200);
+    chassis.follow(final_path_4_txt, 20, 20000);
+    chassis.waitUntilDone();
+
+    //move back to score the wall stake
+    chassis.moveToPoint(3.1, 49, 4000, {.forwards = false});
+    chassis.waitUntilDone();
+    ladybrown_target_set(21);
+    chassis.turnToHeading(0, 800);
+    chassis.waitUntilDone();
+    chassis.moveToPose(3.55, 62, 0, 1000);
+    chassis.waitUntilDone();
+    pros::delay(600);
+
+
+    //score ladybrown
+    intake_move(0);
+    intake.brake();
+    ladybrown_target_set(130);
+    pros::delay(1000);
+    ladybrown_target_set(0);
+    ladybrown.brake();
+    pros::delay(400);
+
+    //score 3 rings in a row
+    chassis.moveToPoint(3.4, 43, 4000, {.forwards = false});
+    chassis.waitUntilDone();
+    intake_move(200);
+    chassis.moveToPoint(-62, 46.5, 10000, {.maxSpeed = 80});
+    chassis.waitUntilDone();
 }
 
 
