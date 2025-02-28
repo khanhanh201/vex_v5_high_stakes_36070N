@@ -30,3 +30,4 @@ void red_left_main();
 void red_right_wall_stake();
 void blue_left_wall_stake();
 void red_right_goal_rush_ver_2();
+void blue_left_goal_rush_ver_2();

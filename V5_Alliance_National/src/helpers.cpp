@@ -24,7 +24,7 @@ void Ladybrown (int ladybrown_power) {
 // mogo 
 // true = grasp
 // false = release
-ez::Piston mogo('C', false);
+ez::Piston mogo('C', true);
 
 void Mogo (bool check) {
     mogo.button_toggle(check);

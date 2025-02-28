@@ -183,7 +183,7 @@ void initialize() {
   rotation_sensor.reset_position();
   rotation_sensor.set_reversed(true);
   intake_motor.tare_position();
-  mogo.set(true);
+  mogo.set(false);
 
   master.rumble(chassis.drive_imu_calibrated() ? "." : "---");
 }
@@ -206,7 +206,7 @@ void autonomous() {
   chassis.odom_xyt_set(0_in, 0_in, 0_deg);    // Set the current position, you can start at a specific position with this
   chassis.drive_brake_set(MOTOR_BRAKE_HOLD);  // Set motors to hold.  This helps autonomous consistency
 
-  blue_right_main();
+  red_left_main();
 }
 
 
