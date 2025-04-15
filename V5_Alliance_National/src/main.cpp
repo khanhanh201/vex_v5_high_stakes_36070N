@@ -1,12 +1,5 @@
 #include "main.h"
 
-//ladybrown macros
-#define ladybrown_hold_angle 35
-#define ladybrown_down_angle 5
-#define ladybrown_up_angle 120
-#define ladybrown_deadband 0.5
-#define ladybrown_time_count 10
-
 
 /**
  * before each match:
@@ -28,17 +21,20 @@ ez::Drive chassis(
 
 
 
+
+//ladybrown macros
+double ladybrown_hold_angle = 33;
+const double ladybrown_up_angle = 150;
+const double ladybrown_down_angle = 5;
+
 my_custom_PID ladybrown_PID(4, 0, 12);
 double rotation_error;
 int rotation_count;
-bool manual_ladybrown = true;
-bool move_done = false;
+bool move_done = true;
 
-void ladybrown_move_PID(double target)
+void ladybrown_move_PID(double target, double deadband, int time_count)
 {
-  pros::lcd::set_text(4, "not done");
 	move_done = false;
-  manual_ladybrown = false;
   rotation_count = 0;
 	ladybrown_PID.reset();
 
@@ -48,16 +44,17 @@ void ladybrown_move_PID(double target)
 		ladybrown.move_velocity(ladybrown_PID.update(rotation_error));
 
     if(master.get_digital(DIGITAL_UP) || master.get_digital(DIGITAL_DOWN)) move_done = true;
+    if (master.get_digital(DIGITAL_RIGHT) && target == ladybrown_hold_angle) move_done = true;
+    if (master.get_digital(DIGITAL_LEFT) && (target == ladybrown_up_angle || target == ladybrown_down_angle)) move_done = true;
 
-		if (std::abs(rotation_error) < ladybrown_deadband) rotation_count++;
-    if (rotation_count >= ladybrown_time_count) move_done = true;
+		if (std::abs(rotation_error) < deadband) rotation_count++;
+    if (rotation_count >= time_count) move_done = true;
 
 		pros::delay(ez::util::DELAY_TIME);
 	}
-  pros::lcd::set_text(4, "done");
+  master.rumble(".");     
   ladybrown.brake();
 	ladybrown_PID.reset();
-  manual_ladybrown = true;
 }
 
 void ladybrown_task()
@@ -67,20 +64,20 @@ void ladybrown_task()
 
   while (true)
   {
-    if (master.get_digital(DIGITAL_LEFT))
-    {
-      ladybrown_move_PID(ladybrown_hold_angle);
-    }
-    
+    if (master.get_digital(DIGITAL_LEFT)) ladybrown_move_PID(ladybrown_hold_angle, 0.2, 4);
     if (master.get_digital(DIGITAL_RIGHT))
     {
-      ladybrown_move_PID(ladybrown_up_angle);
+      ladybrown_move_PID(ladybrown_up_angle, 1, 1);
+      ladybrown_move_PID(ladybrown_down_angle, 1, 1);
     }
 
     pros::delay(ez::util::DELAY_TIME);
   }
 }
 pros::Task Ladybrown_Task(ladybrown_task);
+
+
+
 
 
 
@@ -95,7 +92,7 @@ void optical_task()
   while (true)
   {
     optical_sensor.disable_gesture();
-    if (conveyor_motor.get_actual_velocity() > 0) optical_sensor.set_led_pwm(100);
+    if (conveyor_motor.get_actual_velocity() > 0) optical_sensor.set_led_pwm(70);
     else optical_sensor.set_led_pwm(0);
   
     if (ring_detected == false)
@@ -125,7 +122,6 @@ void optical_task()
 pros::Task Optical_Task(optical_task);
 
 
-bool run_conveyor = false;
 void intake_auto_task()
 {
   while (true)
@@ -141,11 +137,6 @@ void intake_auto_task()
 pros::Task Intake_Auto_Task(intake_auto_task);
 
 
-
-void conveyor_auto(bool run)
-{
-  run_conveyor = run;
-}
 
 
 
@@ -225,12 +216,14 @@ void display_task()
 {
   while (true)
   {
-    pros::lcd::set_text(3, "Ladybrown angle: " + std::to_string((double)(rotation_sensor.get_position())/100));
+    pros::lcd::set_text(2, "Ladybrown current angle: " + std::to_string((double)(rotation_sensor.get_position())/100));
+    pros::lcd::set_text(3, "Ladybrown target angle: " + std::to_string(ladybrown_hold_angle));
     pros::lcd::set_text(4, "Hue: " + std::to_string(hue));
     pros::lcd::set_text(5, "Proximity: " + std::to_string(proximity));
+    pros::lcd::set_text(6, "move_done: " + std::to_string(move_done));
 
     //log the ladybrown's position
-    if (!manual_ladybrown) std::cout <<((double)(rotation_sensor.get_position())/100) <<",\n";
+    if (!move_done) std::cout <<((double)(rotation_sensor.get_position())/100) <<",\n";
     pros::delay(ez::util::DELAY_TIME);
   }
 }
@@ -306,10 +299,7 @@ void opcontrol() {
     Conveyor((master.get_digital(DIGITAL_R1) - master.get_digital(DIGITAL_R2))*600*conveyor_direction);
 
     // ladybrown
-    if(master.get_digital(DIGITAL_LEFT) || master.get_digital(DIGITAL_RIGHT)) manual_ladybrown = false;
-    if(master.get_digital(DIGITAL_UP) || master.get_digital(DIGITAL_DOWN)) manual_ladybrown = true;
-
-    if (manual_ladybrown) Ladybrown((master.get_digital(DIGITAL_UP) - master.get_digital(DIGITAL_DOWN))*200);
+    Ladybrown((master.get_digital(DIGITAL_UP) - master.get_digital(DIGITAL_DOWN))*200);
 
     // mogo
     Mogo(master.get_digital(DIGITAL_X));
@@ -317,6 +307,10 @@ void opcontrol() {
     // doinker 
     Left_doinker(master.get_digital(DIGITAL_A));
     Right_doinker(master.get_digital(DIGITAL_Y));
+
+    //ladybrown tuner
+    if (master.get_digital(DIGITAL_B) && master.get_digital(DIGITAL_UP)) ladybrown_hold_angle += 0.1;
+    if (master.get_digital(DIGITAL_B) && master.get_digital(DIGITAL_DOWN)) ladybrown_hold_angle -= 0.1; 
 
     pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
   }

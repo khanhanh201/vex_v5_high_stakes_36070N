@@ -1,5 +1,11 @@
 #include "main.h"
 
+bool run_conveyor = false;
+void conveyor_auto(bool run)
+{
+    run_conveyor = run;
+}
+
 //rotation sensor
 pros::Rotation rotation_sensor(5);
 
@@ -29,7 +35,7 @@ void Ladybrown (int ladybrown_power) {
 // mogo 
 // true = grasp
 // false = release
-ez::Piston mogo('C', true);
+ez::Piston mogo('C', false);
 
 void Mogo (bool check) {
     mogo.button_toggle(check);
@@ -44,7 +50,7 @@ void Left_doinker (bool check) {
     left_doinker_pneumatic.button_toggle(check);
 }
 
-ez::Piston right_doinker_pneumatic('B', false);
+ez::Piston right_doinker_pneumatic('H', false);
 
 void Right_doinker (bool check) {
     right_doinker_pneumatic.button_toggle(check);

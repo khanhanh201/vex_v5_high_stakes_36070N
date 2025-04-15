@@ -1,5 +1,8 @@
 #include "main.h"
 
+extern bool run_conveyor;
+void conveyor_auto(bool run);
+
 //rotation
 extern pros::Rotation rotation_sensor;
 

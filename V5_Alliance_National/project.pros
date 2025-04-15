@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "random",
+    "project_name": "random 2",
     "target": "v5",
     "templates": {
       "EZ-Template": {
@@ -425,8 +425,8 @@
     },
     "upload_options": {
       "description": "roboticsisez.com",
-      "slot": 4,
-      "icon": "ufo"
+      "slot": 2,
+      "icon": "planet"
     },
     "use_early_access": false
   }
