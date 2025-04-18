@@ -42,16 +42,17 @@ void Mogo (bool check) {
 }
 
 
-
 // doinker
+// true = down
+// false = up
 ez::Piston left_doinker_pneumatic('A', false);
-
 void Left_doinker (bool check) {
     left_doinker_pneumatic.button_toggle(check);
 }
 
+// true = down
+// false = up
 ez::Piston right_doinker_pneumatic('H', false);
-
 void Right_doinker (bool check) {
     right_doinker_pneumatic.button_toggle(check);
 }

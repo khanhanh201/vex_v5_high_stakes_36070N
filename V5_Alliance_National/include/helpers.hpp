@@ -1,4 +1,4 @@
-#include "main.h"
+#pragma once
 
 extern bool run_conveyor;
 void conveyor_auto(bool run);
@@ -11,25 +11,24 @@ extern pros::Optical optical_sensor;
 
 //intake
 extern pros::Motor intake_motor;
-void Intake(int intake_power);
+void Intake(int);
 
 //conveyor
 extern pros::Motor conveyor_motor;
-void Conveyor(int conveyor_power);
+void Conveyor(int);
 
 //ladybrown
 extern pros::Motor ladybrown;
-void Ladybrown(int ladybrown_power);
+void Ladybrown(int);
 
 //grab stake
 extern ez::Piston mogo;
-void Mogo (bool check);
+void Mogo (bool);
 
 // lift intake
 extern ez::Piston left_doinker_pneumatic;
-void Left_doinker (bool check);
+void Left_doinker (bool);
 
 // doinker
 extern ez::Piston right_doinker_pneumatic;
-void Right_doinker (bool check);
-
+void Right_doinker (bool);

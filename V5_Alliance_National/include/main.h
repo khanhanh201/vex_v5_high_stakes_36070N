@@ -48,6 +48,8 @@
 #include "subsystems.hpp"
 #include "helpers.hpp"
 #include "my_custom_PID.hpp"
+#include "ladybrowns.hpp"
+#include "color_sort.hpp"
 
 
 /**
