@@ -16,31 +16,8 @@ ez::Drive chassis(
     {-8, 9,  10},  // Right Chassis Ports (negative port will reverse it!)
 
     4,      // IMU Port
-    3.25,  // Wheel Diameter (Remember, 4" wheels without screw holes are actually 4.125!)
+    3.375,  // Wheel Diameter (Remember, 4" wheels without screw holes are actually 4.125!)
     400);   // Wheel RPM = cartridge * (motor gear / wheel gear)
-
-
-//ladybrown
-pros::Task Ladybrown_Task(ladybrown_task);
-
-
-
-void display_task()
-{
-  while (true)
-  {
-    pros::lcd::set_text(2, "Ladybrown current angle: " + std::to_string((double)(rotation_sensor.get_position())/100));
-    pros::lcd::set_text(3, "Ladybrown target angle: " + std::to_string(ladybrown_hold_angle));
-    pros::lcd::set_text(4, "Hue: " + std::to_string(hue));
-    pros::lcd::set_text(5, "Proximity: " + std::to_string(proximity));
-    pros::lcd::set_text(6, "move_done: " + std::to_string(move_done));
-
-    //log the ladybrown's position
-    if (!move_done) std::cout <<((double)(rotation_sensor.get_position())/100) <<",\n";
-    pros::delay(ez::util::DELAY_TIME);
-  }
-}
-pros::Task Display_Task(display_task);
 
 
 /**
@@ -64,15 +41,31 @@ void initialize() {
   chassis.initialize();
   ez::as::initialize();
 
+  chassis.pid_tuner_full_enable(true);
   ladybrown.tare_position();
   ladybrown.set_encoder_units(MOTOR_ENCODER_DEGREES);
   rotation_sensor.reset_position();
   rotation_sensor.set_reversed(true);
   intake_motor.tare_position();
-  mogo.set(false);
-
+  // mogo.set(false);
   master.rumble(chassis.drive_imu_calibrated() ? "." : "---");
 }
+pros::Task Ladybrown_Task(ladybrown_task);
+
+void display_task()
+{
+  while (true)
+  {
+    pros::lcd::set_text(2, "Ladybrown current angle: " + std::to_string((double)(rotation_sensor.get_position())/100));
+    pros::lcd::set_text(3, "Ladybrown target angle: " + std::to_string(ladybrown_hold_angle));
+    pros::lcd::set_text(4, "Hue: " + std::to_string(hue));
+    pros::lcd::set_text(5, "Proximity: " + std::to_string(proximity));
+    pros::lcd::set_text(6, "move_done: " + std::to_string(move_done));
+    pros::delay(ez::util::DELAY_TIME);
+  }
+}
+pros::Task Display_Task(display_task);
+
 
 
 void disabled() {
@@ -90,15 +83,17 @@ void autonomous() {
   chassis.drive_imu_reset();                  // Reset gyro position to 0
   chassis.drive_sensor_reset();               // Reset drive sensors to 0
   chassis.odom_xyt_set(0_in, 0_in, 0_deg);    // Set the current position, you can start at a specific position with this
-  chassis.drive_brake_set(MOTOR_BRAKE_HOLD);  // Set motors to hold.  This helps autonomous consistency
-
-  //red_left_main();
+  chassis.drive_brake_set(MOTOR_BRAKE_HOLD);  // Set motors to hold.  This helps autonomous consistence
+  mogo.set(false);
+  // positive_red();
+  negative_red();
 }
 
 
 
-void opcontrol() {
+void opcontrol() {  
   // This is preference to what you like to drive on
+
   chassis.drive_brake_set(MOTOR_BRAKE_COAST);
   ladybrown.set_brake_mode(MOTOR_BRAKE_BRAKE);
 
@@ -118,12 +113,12 @@ void opcontrol() {
     Mogo(master.get_digital(DIGITAL_X));
 
     // doinker 
-    Left_doinker(master.get_digital(DIGITAL_A));
-    Right_doinker(master.get_digital(DIGITAL_Y));
+    Left_doinker(master.get_digital(DIGITAL_Y));
+    Right_doinker(master.get_digital(DIGITAL_A));
 
-    //ladybrown tuner
-    if (master.get_digital(DIGITAL_B) && master.get_digital(DIGITAL_UP)) ladybrown_hold_angle += 0.1;
-    if (master.get_digital(DIGITAL_B) && master.get_digital(DIGITAL_DOWN)) ladybrown_hold_angle -= 0.1; 
+    if (master.get_digital_new_press(DIGITAL_B)){
+      chassis.pid_tuner_toggle();
+    }
 
     pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
   }

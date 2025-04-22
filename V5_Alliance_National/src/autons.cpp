@@ -13,9 +13,9 @@ const int DRIVE_SPEED_LOW = 90;
 
 void default_constants() {
   // P, I, D, and Start I
-  chassis.pid_drive_constants_set(20.0, 0.0, 100.0);         // Fwd/rev constants, used for odom and non odom motions
+  chassis.pid_drive_constants_set(20, 0.0, 100);              // Fwd/rev constants, used for odom and non odom motions old = (20.0, 0.0, 100.0)
   chassis.pid_heading_constants_set(11.0, 0.0, 20.0);        // Holds the robot straight while going forward without odom
-  chassis.pid_turn_constants_set(3.0, 0.05, 20.0, 15.0);     // Turn in place constants
+  chassis.pid_turn_constants_set(3.0, 0.05, 20.0, 5.0);     // Turn in place constants (3.0, 0.05, 20.0, 15.0);
   chassis.pid_swing_constants_set(6.0, 0.0, 65.0);           // Swing constants
   chassis.pid_odom_angular_constants_set(6.5, 0.0, 52.5);    // Angular control for odom motions
   chassis.pid_odom_boomerang_constants_set(5.8, 0.0, 32.5);  // Angular control for boomerang motions
@@ -45,6 +45,7 @@ void default_constants() {
 
   chassis.pid_angle_behavior_set(ez::shortest);  // Changes the default behavior for turning, this defaults it to the shortest path there
 }
+
 
 
 /*
@@ -690,3 +691,109 @@ void red_right_ver_8(){
 }
 
 */
+void dosth()
+{
+  Conveyor(600);
+  Intake(200);
+  Left_doinker(true);
+  Right_doinker(true);
+  Mogo(true);
+//   ladybrown_move_PID(180, 3, 1);
+}
+
+void negative_red(){
+  Intake(200);
+  left_doinker_pneumatic.set(true);
+  chassis.pid_drive_set(44_in, 110);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_swing_set(ez::LEFT_SWING, -53_deg, 80, 41);
+  chassis.pid_wait();
+  mogo.set(true);
+  left_doinker_pneumatic.set(false);
+  Intake(200);
+  chassis.pid_turn_set(-65_deg, 90);
+  chassis.pid_wait_quick_chain();
+  Conveyor(600);
+  chassis.pid_drive_set(29_in, 80);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(-15_in, 70);
+  chassis.pid_wait_quick_chain();
+  pros::delay(150);
+  ladybrown_move_PID(ladybrown_hold_angle, 0.5, 3);
+  chassis.pid_turn_set(160_deg, 90);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(34_in, DRIVE_SPEED_HIGH);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_turn_set(167_deg, 90);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(13_in, DRIVE_SPEED_HIGH);
+  chassis.pid_wait_quick_chain();
+  pros::delay(300);
+  ladybrown_move_PID(200, 0.5, 3);
+}
+
+void positive_red(){
+  ladybrown.move_relative(800, 500);
+  pros::delay(800);
+  ladybrown.move_relative(-950, 500);
+  // ladybrown_move_PID(185, 5, 1);
+  // ladybrown_move_PID(-23, 4, 1);
+  chassis.pid_drive_set(-3_in, DRIVE_SPEED_HIGH);
+  chassis.pid_wait_quick_chain();
+  // chassis.pid_turn_set(43_deg, TURN_SPEED);
+  // Xoay 90 độ với tốc độ cao, không dừng chính xác
+  // chassis.pid_turn_constants_set(0.0, 0.0, 0.0, 0.0);
+  chassis.pid_turn_set(43_deg, TURN_SPEED);
+  pros::delay(150);
+  // chassis.pid_wait_quick_chain(); 
+  chassis.pid_drive_set(5_in, DRIVE_SPEED_HIGH);
+  chassis.pid_wait_quick_chain();
+  right_doinker_pneumatic.set(true);
+  pros::delay(100);
+  chassis.pid_drive_set(-10_in, DRIVE_SPEED_HIGH);
+  chassis.pid_wait_quick_chain();
+  right_doinker_pneumatic.set(false);
+  pros::delay(250);
+  Intake(200);
+  chassis.pid_turn_set(70_deg, TURN_SPEED);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(10_in, DRIVE_SPEED_LOW);
+  chassis.pid_wait_quick_chain();
+  pros::delay(400);
+  chassis.pid_turn_set(-35_deg, TURN_SPEED);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(-20, DRIVE_SPEED_HIGH);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(-5, DRIVE_SPEED_LOW);
+  chassis.pid_wait_quick_chain();
+  mogo.set(true);
+  Conveyor(600);
+  pros::delay(800);
+  conveyor_motor.brake();
+  chassis.pid_turn_set(-145_deg, TURN_SPEED, ez::counterclockwise);
+  chassis.pid_wait_quick_chain();
+  mogo.set(false);
+  chassis.pid_drive_set(18, DRIVE_SPEED_HIGH);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_turn_set(-50_deg, TURN_SPEED);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(-11, 120);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(-2, DRIVE_SPEED_LOW);
+  chassis.pid_wait_quick_chain();
+  mogo.set(true);
+  pros::delay(150);
+  Conveyor(600);
+  pros::delay(600);
+  chassis.pid_swing_set(ez::RIGHT_SWING, 110_deg, 80, 25);
+  ladybrown_move_PID(135, 4, 1);
+}
+
+void test(){
+  chassis.pid_drive_set(40_in, 127);
+  // chassis.pid_wait_quick_chain();
+  // chassis.pid_swing_set(ez::LEFT_SWING, -60_deg, 90, 65);
+  // // chassis.pid_turn_set(180_deg, 127);
+}
+
+  

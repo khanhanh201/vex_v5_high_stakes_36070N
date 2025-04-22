@@ -1,6 +1,7 @@
 #pragma once
 
 //ladybrown macros
+
 extern double ladybrown_hold_angle;
 extern double ladybrown_up_angle;
 extern double ladybrown_down_angle;

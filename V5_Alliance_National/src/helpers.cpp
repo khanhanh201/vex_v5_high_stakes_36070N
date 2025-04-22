@@ -36,7 +36,6 @@ void Ladybrown (int ladybrown_power) {
 // true = grasp
 // false = release
 ez::Piston mogo('C', false);
-
 void Mogo (bool check) {
     mogo.button_toggle(check);
 }
@@ -45,14 +44,14 @@ void Mogo (bool check) {
 // doinker
 // true = down
 // false = up
-ez::Piston left_doinker_pneumatic('A', false);
+ez::Piston left_doinker_pneumatic('H', false);
 void Left_doinker (bool check) {
     left_doinker_pneumatic.button_toggle(check);
 }
 
 // true = down
 // false = up
-ez::Piston right_doinker_pneumatic('H', false);
+ez::Piston right_doinker_pneumatic('A', false);
 void Right_doinker (bool check) {
     right_doinker_pneumatic.button_toggle(check);
 }
