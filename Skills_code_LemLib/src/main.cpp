@@ -74,7 +74,8 @@ pros::ADIDigitalOut right_doinker_pneumatic(right_doinker_pneumatic_port);
 
 //Tracking wheels, wheel type and offset to be determined
 lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_encoder, lemlib::Omniwheel::NEW_2, 1.4);
-lemlib::TrackingWheel vertical_tracking_wheel(&vertical_encoder, lemlib::Omniwheel::NEW_2, 0.9); //phai tune lai
+lemlib::TrackingWheel vertical_tracking_wheel(&vertical_encoder, lemlib::Omniwheel::NEW_2, 0.9);
+//lemlib::TrackingWheel vertical_tracking_wheel(&right_motor_group, lemlib::Omniwheel::NEW_325, 5.51, 400);
 
 //Drivetrain settings
 lemlib::Drivetrain drivetrain(&left_motor_group, 
@@ -222,9 +223,9 @@ void initialize() {
             if (record_speed)
             {
                 //for angular
-                //std::cout <<(imu.get_rotation() - current_heading) <<",\n";
+                std::cout <<(imu.get_rotation() - current_heading) <<",\n";
                 //for lateral
-                std::cout <<chassis.getPose().y <<",\n";
+                //std::cout <<chassis.getPose().y <<",\n";
                 //std::cout <<left_motor_group.get_actual_velocity() <<",\n";
                 pros::delay(delay_time);
             }
@@ -261,84 +262,102 @@ void autonomous()
     pros::delay(600);
 
     //move forward and turn 90
-    chassis.moveToPoint(-45.75, 0, 1000);
+    chassis.moveToPoint(-47, 0, 1000);
     chassis.waitUntilDone();
-    chassis.turnToHeading(0, 750);
+    chassis.turnToHeading(0, 700);
     chassis.waitUntilDone();
 
     //move to the mogo and grasp
-    chassis.moveToPoint(-47.25, -17, 2000, {.forwards = false});
+    chassis.moveToPoint(-45.25, -18, 2000, {.forwards = false});
     chassis.waitUntilDone();
     mogo_move(true);
     pros::delay(300);
 
     //follow path and score rings
-    chassis.turnToHeading(113, 800);
-    chassis.follow(final_path_1_txt, 25, 5000);
+    chassis.turnToHeading(113, 700);
+    chassis.follow(final_path_1_txt, 30, 5000);
     chassis.waitUntilDone();
     pros::delay(200);
     
-    //move to the alliance stake
-    chassis.moveToPoint(4.15, -45, 800, {.forwards = false});
+    //move to the wall stake
+    chassis.moveToPoint(1.4, -46.5, 2000, {.forwards = false}); //x: 3.85
     chassis.waitUntilDone();
-    chassis.turnToHeading(180, 800);
+    chassis.turnToHeading(180, 800, {.minSpeed = 20});
     ladybrown_move_PID(ladybrown_hold_angle, 0.4, 3);
     chassis.waitUntilDone();
-    chassis.moveToPoint(4.05, -68, 2000);
+    chassis.moveToPoint(1.9, -64.25, 2000); //x:4.45, y:67
+    chassis.waitUntilDone();
+    pros::delay(650);
+
+    //score ladybrown
+    intake.brake();
+    conveyor.brake();
+    ladybrown_move_PID(ladybrown_up_angle, 5, 1);
+
+    //take in 3 rings in a row
+    chassis.moveToPoint(3, -46, 1000, {.forwards = false});
+    ladybrown_move_PID(ladybrown_down_angle, 5, 1);
+    chassis.waitUntilDone();
+    intake_move(200);
+    conveyor_move(600);
+    chassis.moveToPoint(-60, -53, 10000, {.maxSpeed = 65});
+    chassis.waitUntilDone();
+    pros::delay(500);
+
+    //take in the final ring
+    chassis.moveToPose(-37.5, -74.5, 135, 1200);
+    chassis.waitUntilDone();
+    pros::delay(300);
+
+    //move to the corner
+    chassis.moveToPose(-66, -91, 45, 700, {.forwards = false, .minSpeed = 100});
+    chassis.waitUntilDone();
+    pros::delay(200);
+    mogo_move(false);
+    pros::delay(200);
+    conveyor.brake();
+    intake.brake();
+
+    //move out of the corner
+    chassis.moveToPoint(-30, -40, 2000);
+    chassis.waitUntilDone();
+
+    //move to the mobile goal
+    chassis.moveToPoint(-42, 10, 10000, {.forwards = false, .minSpeed = 50, .earlyExitRange = 10});
+    chassis.waitUntilDone();
+    chassis.moveToPoint(-42, 18, 1000, {.forwards = false, .maxSpeed = 80});
+    chassis.waitUntilDone();
+    intake_move(200);
+    conveyor_move(600);
+    mogo_move(true);
+    pros::delay(200);
+
+    //follow path and intake rings
+    chassis.turnToHeading(80, 1000);
+    chassis.waitUntilDone();
+    chassis.follow(final_path_4_txt, 30, 20000);
+    chassis.waitUntilDone();
+
+    //move to the ladybrown
+    chassis.moveToPoint(7, 38, 10000, {.forwards = false});
+    chassis.waitUntilDone();
+    chassis.turnToHeading(0, 1000, {.minSpeed = 40});
+    ladybrown_move_PID(ladybrown_hold_angle, 0.4, 3);
+    chassis.waitUntilDone();
+    chassis.moveToPoint(7.3, 58, 10000);
     chassis.waitUntilDone();
     pros::delay(800);
 
     //score ladybrown
     intake.brake();
     conveyor.brake();
-
     ladybrown_move_PID(ladybrown_up_angle, 5, 1);
+    chassis.moveToPoint(8, 38, 20000, {.forwards = false});
     ladybrown_move_PID(ladybrown_down_angle, 5, 1);
-    ladybrown.brake();
-
-    //take in 3 rings in a row
-    chassis.moveToPoint(3, -46, 1000, {.forwards = false});
     chassis.waitUntilDone();
     intake_move(200);
     conveyor_move(600);
-    chassis.moveToPoint(-60, -55, 10000, {.maxSpeed = 70});
-    chassis.waitUntilDone();
-    // chassis.moveToPoint(-55, -55, 1000, {.forwards = false});
-    // chassis.waitUntilDone();
-    // chassis.moveToPoint(-45, -66, 2000);
-    // chassis.waitUntilDone();
-    // chassis.moveToPose(-61, -63, -45, 5000, {.forwards = false});
-    // chassis.waitUntilDone();
-    // mogo_move(false);
-    // conveyor.brake();
-
-    //take in the final ring
-    chassis.moveToPose(-37.5, -74.5, 135, 1200);
-    chassis.waitUntilDone();
-    pros::delay(500);
-
-    //move to the corner
-    chassis.moveToPose(-66, -76, 45, 900, {.forwards = false});
-    chassis.waitUntilDone();
-    pros::delay(200);
-    mogo_move(false);
-    conveyor.brake();
-    intake.brake();
-
-    //move our of the corner
-    chassis.moveToPoint(-30, -40, 2000);
-    chassis.waitUntilDone();
-
-    //move to the mobile goal
-    chassis.moveToPoint(-41, 18, 10000, {.forwards = false});
-    chassis.waitUntilDone();
-    intake_move(200);
-    conveyor_move(600);
-    mogo_move(true);
-    pros::delay(200);
-    chassis.turnToHeading(80, 1000);
-    chassis.waitUntilDone();
-    chassis.follow(final_path_4_txt, 20, 20000);
+    chassis.moveToPoint(-50, 30, 20000, {.maxSpeed = 65});
     chassis.waitUntilDone();
 
     /*
