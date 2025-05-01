@@ -1,14 +1,12 @@
-//TUNING PID: TUNING P GAIN AND D GAIN THROUGH ANGULAR MOVEMENT
-
 #include "lemlib/api.hpp" // IWYU pragma: keep
 #include "main.h"
 
 //Motors
 #define left_motor_port_1 -9
-#define left_motor_port_2 -5
+#define left_motor_port_2 -4
 #define left_motor_port_3 19
 #define right_motor_port_1 10
-#define right_motor_port_2 7
+#define right_motor_port_2 6
 #define right_motor_port_3 -8
 #define conveyor_port -2
 #define intake_port 11
@@ -18,9 +16,9 @@
 #define IMU_port 18
 
 //Encoder
-#define horizontal_encoder_port -4
-#define vertical_encoder_port 6
-#define ladybrown_encoder_port 1
+#define horizontal_encoder_port -3
+#define vertical_encoder_port 5
+#define ladybrown_encoder_port 7
 
 //Pistons
 #define mogo_pneumatic_port 'B'
@@ -28,10 +26,9 @@
 #define right_doinker_pneumatic_port 'A'
 
 //Ladybrown
-#define ladybrown_deadband 2
 #define ladybrown_hold_angle 24.5
 #define ladybrown_up_angle 150
-#define ladybrown_down_angle 2
+#define ladybrown_down_angle 1
 
 //Time
 #define delay_time 10
@@ -75,7 +72,6 @@ pros::ADIDigitalOut right_doinker_pneumatic(right_doinker_pneumatic_port);
 //Tracking wheels, wheel type and offset to be determined
 lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_encoder, lemlib::Omniwheel::NEW_2, 1.4);
 lemlib::TrackingWheel vertical_tracking_wheel(&vertical_encoder, lemlib::Omniwheel::NEW_2, 0.9);
-//lemlib::TrackingWheel vertical_tracking_wheel(&right_motor_group, lemlib::Omniwheel::NEW_325, 5.51, 400);
 
 //Drivetrain settings
 lemlib::Drivetrain drivetrain(&left_motor_group, 
@@ -89,16 +85,16 @@ lemlib::Drivetrain drivetrain(&left_motor_group,
 //Sensors for odometry
 lemlib::OdomSensors sensors(&vertical_tracking_wheel, // vertical tracking wheel
                             nullptr, // vertical tracking wheel 2, set to nullptr as we don't have a second one
-                            &horizontal_tracking_wheel, // horizontal tracking wheel
+                            nullptr, // horizontal tracking wheel
                             nullptr, // horizontal tracking wheel 2, set to nullptr as we don't have a second one
                             &imu // inertial sensor
 );
 
 //Two PID controllers: lateral and angular
 //20 0 100 is good
-lemlib::ControllerSettings lateral_controller(25, // proportional gain (kP)
+lemlib::ControllerSettings lateral_controller(20, // proportional gain (kP)
                                             0, // integral gain (kI)
-                                            127, // derivative gain (kD)
+                                            125, // derivative gain (kD)
                                             3, // anti-windup
                                             1, // small error range, in inches
                                             100, // small error range timeout, in milliseconds
@@ -132,7 +128,7 @@ lemlib::Chassis chassis(drivetrain, lateral_controller, angular_controller, sens
 //ladybrown
 //hang???
 
-my_custom_PID ladybrown_PID(4, 0, 12);
+my_custom_PID ladybrown_PID(4, 0, 3.5);
 double rotation_error;
 int rotation_count;
 bool move_done = true;
@@ -183,6 +179,34 @@ void right_doinker_move(bool x)
 }
 
 
+bool enable_antijam = false;
+long long antijam_count = 0;
+void conveyor_antijam()
+{
+    while (true)
+    {
+        if (enable_antijam)
+        {
+            if (conveyor.get_target_velocity() - conveyor.get_actual_velocity() > 300) antijam_count++;
+            if (conveyor.get_target_velocity() - conveyor.get_actual_velocity() <= 300) antijam_count = 0;
+            if (antijam_count > 15)
+            {
+                antijam_count = 0;
+                conveyor_move(-300);
+                intake_move(-200);
+                pros::delay(500);
+                conveyor_move(600);
+                intake_move(200);
+            }
+            pros::delay(delay_time);
+        }
+        else antijam_count = 0;
+        pros::delay(delay_time);
+    }
+}
+pros::Task Conveyor_Antijam(conveyor_antijam);
+
+
 
 bool record_speed = false;
 double current_heading;
@@ -217,7 +241,7 @@ void initialize() {
             pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
             pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
             pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
-            pros::lcd::print(3, "kP: %f", lateral_controller.kP); // heading
+            pros::lcd::print(3, "kP: %f", lateral_controller.kP); // lateral
             pros::lcd::print(4, "kD: %f", lateral_controller.kD);
             
             if (record_speed)
@@ -262,30 +286,32 @@ void autonomous()
     pros::delay(600);
 
     //move forward and turn 90
-    chassis.moveToPoint(-47, 0, 1000);
+    chassis.moveToPoint(-45.3, 0, 1000);
     chassis.waitUntilDone();
     chassis.turnToHeading(0, 700);
     chassis.waitUntilDone();
 
     //move to the mogo and grasp
-    chassis.moveToPoint(-45.25, -18, 2000, {.forwards = false});
+    chassis.moveToPoint(-44.55, -18.5, 2000, {.forwards = false});
     chassis.waitUntilDone();
     mogo_move(true);
     pros::delay(300);
 
     //follow path and score rings
     chassis.turnToHeading(113, 700);
+    enable_antijam = true;
     chassis.follow(final_path_1_txt, 30, 5000);
     chassis.waitUntilDone();
     pros::delay(200);
     
     //move to the wall stake
-    chassis.moveToPoint(1.4, -46.5, 2000, {.forwards = false}); //x: 3.85
+    chassis.moveToPoint(3.1, -47, 2000, {.forwards = false}); //x: 3.85
     chassis.waitUntilDone();
+    enable_antijam = false;
     chassis.turnToHeading(180, 800, {.minSpeed = 20});
     ladybrown_move_PID(ladybrown_hold_angle, 0.4, 3);
     chassis.waitUntilDone();
-    chassis.moveToPoint(1.9, -64.25, 2000); //x:4.45, y:67
+    chassis.moveToPoint(4.9, -66.5, 2000); //x:4.45, y:67
     chassis.waitUntilDone();
     pros::delay(650);
 
@@ -296,24 +322,26 @@ void autonomous()
 
     //take in 3 rings in a row
     chassis.moveToPoint(3, -46, 1000, {.forwards = false});
-    ladybrown_move_PID(ladybrown_down_angle, 5, 1);
+    ladybrown_move_PID(ladybrown_down_angle, 4, 1);
     chassis.waitUntilDone();
     intake_move(200);
     conveyor_move(600);
+    enable_antijam = true;
     chassis.moveToPoint(-60, -53, 10000, {.maxSpeed = 65});
     chassis.waitUntilDone();
     pros::delay(500);
 
     //take in the final ring
-    chassis.moveToPose(-37.5, -74.5, 135, 1200);
+    chassis.moveToPose(-37.5, -74.5, 135, 1100);
     chassis.waitUntilDone();
     pros::delay(300);
 
     //move to the corner
-    chassis.moveToPose(-66, -91, 45, 700, {.forwards = false, .minSpeed = 100});
+    chassis.moveToPose(-70, -91, 45, 550, {.forwards = false, .minSpeed = 80});
     chassis.waitUntilDone();
     pros::delay(200);
     mogo_move(false);
+    enable_antijam = false;
     pros::delay(200);
     conveyor.brake();
     intake.brake();
@@ -323,10 +351,11 @@ void autonomous()
     chassis.waitUntilDone();
 
     //move to the mobile goal
-    chassis.moveToPoint(-42, 10, 10000, {.forwards = false, .minSpeed = 50, .earlyExitRange = 10});
+    chassis.moveToPoint(-43.5, 10, 10000, {.forwards = false, .minSpeed = 50, .earlyExitRange = 10});
     chassis.waitUntilDone();
-    chassis.moveToPoint(-42, 18, 1000, {.forwards = false, .maxSpeed = 80});
+    chassis.moveToPoint(-43.5, 18, 1000, {.forwards = false, .maxSpeed = 80});
     chassis.waitUntilDone();
+    enable_antijam = true;
     intake_move(200);
     conveyor_move(600);
     mogo_move(true);
@@ -339,12 +368,13 @@ void autonomous()
     chassis.waitUntilDone();
 
     //move to the ladybrown
-    chassis.moveToPoint(7, 38, 10000, {.forwards = false});
+    chassis.moveToPoint(6., 38, 10000, {.forwards = false});
     chassis.waitUntilDone();
+    enable_antijam = false;
     chassis.turnToHeading(0, 1000, {.minSpeed = 40});
     ladybrown_move_PID(ladybrown_hold_angle, 0.4, 3);
     chassis.waitUntilDone();
-    chassis.moveToPoint(7.3, 58, 10000);
+    chassis.moveToPoint(4.7, 59, 10000); //x:8, y:57.5
     chassis.waitUntilDone();
     pros::delay(800);
 
@@ -352,55 +382,39 @@ void autonomous()
     intake.brake();
     conveyor.brake();
     ladybrown_move_PID(ladybrown_up_angle, 5, 1);
-    chassis.moveToPoint(8, 38, 20000, {.forwards = false});
+    chassis.moveToPoint(7.8, 40, 20000, {.forwards = false});
     ladybrown_move_PID(ladybrown_down_angle, 5, 1);
     chassis.waitUntilDone();
-    intake_move(200);
-    conveyor_move(600);
-    chassis.moveToPoint(-50, 30, 20000, {.maxSpeed = 65});
-    chassis.waitUntilDone();
 
-    /*
-    intake_move(-200);
-    conveyor_move(-200);
-    chassis.waitUntil(5);
+    //intake 3 rings in a row
     intake_move(200);
     conveyor_move(600);
+    enable_antijam = true;
+    chassis.moveToPoint(-56, 43, 20000, {.maxSpeed = 65}); //x:45
     chassis.waitUntilDone();
-    pros::delay(600);
+    pros::delay(800);
 
     //take in the final ring
-    chassis.moveToPose(-40, -72, 135, 1200);
+    conveyor.brake();
+    chassis.moveToPose(-35, 67.5, 45, 1100);
     chassis.waitUntilDone();
-    pros::delay(200);
 
     //move to the corner
-    chassis.moveToPose(-62.5, -71.5, -45, 1500, {.forwards = false});
+    //x-32.5, y-16.5
+    chassis.moveToPose(-67.5, 74, 135, 550, {.forwards = false, .minSpeed = 80}); //y:84
     chassis.waitUntilDone();
-    conveyor_move(-200);
+    enable_antijam = false;
+    conveyor_move(-300);
     mogo_move(false);
-    pros::delay(300);
-    intake.brake();
+    pros::delay(200);
     conveyor.brake();
-
-    //move to the center
-    chassis.follow(final_path_3_txt, 20, 20000);
-    chassis.waitUntil(70);
-    intake_move(200);
-    conveyor_move(600);
-    chassis.waitUntilDone();
-
-    //push the ring
-    chassis.turnToHeading(135, 700);
-    chassis.waitUntil(3);
+    chassis.moveToPoint(25, 37, 10000);
+    chassis.waitUntil(10);
     intake.brake();
-    conveyor.brake();
-    chassis.waitUntilDone();
-    chassis.moveToPoint(-24, 24, 2000, {.forwards = false, .maxSpeed = 90});
-    chassis.waitUntilDone();
-    chassis.moveToPoint(-20, 20, 1000);
     chassis.waitUntilDone();
 
+
+    /*
     //go grab the mogo
     chassis.turnToHeading(97, 1000);
     chassis.waitUntilDone();
