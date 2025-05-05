@@ -26,7 +26,7 @@
 #define right_doinker_pneumatic_port 'A'
 
 //Ladybrown
-#define ladybrown_hold_angle 24.5
+#define ladybrown_hold_angle 23.5
 #define ladybrown_up_angle 150
 #define ladybrown_down_angle 1
 
@@ -128,16 +128,18 @@ lemlib::Chassis chassis(drivetrain, lateral_controller, angular_controller, sens
 //ladybrown
 //hang???
 
-my_custom_PID ladybrown_PID(4, 0, 3.5);
+my_custom_PID ladybrown_PID(4, 0, 4);
 double rotation_error;
 int rotation_count;
 bool move_done = true;
+long long failsafe_count = 0;
 
 void ladybrown_move_PID(double target, double deadband, int time_count)
 {
     rotation_count = 0;
 	ladybrown_PID.reset();
     move_done = false;
+    failsafe_count = 0;
 
 	while (!move_done)
 	{
@@ -146,6 +148,8 @@ void ladybrown_move_PID(double target, double deadband, int time_count)
 
 		if (std::abs(rotation_error) < deadband) rotation_count++;
         if (rotation_count >= time_count) move_done = true;
+        if (target > 140 && ((double)(ladybrown_encoder.get_position())/100) > 80 && ladybrown.get_actual_velocity() < 50) failsafe_count++;
+        if (failsafe_count > 60) move_done = true;
 
 		pros::delay(delay_time);
     }
@@ -189,7 +193,7 @@ void conveyor_antijam()
         {
             if (conveyor.get_target_velocity() - conveyor.get_actual_velocity() > 300) antijam_count++;
             if (conveyor.get_target_velocity() - conveyor.get_actual_velocity() <= 300) antijam_count = 0;
-            if (antijam_count > 15)
+            if (antijam_count > 25)
             {
                 antijam_count = 0;
                 conveyor_move(-300);
@@ -275,6 +279,8 @@ ASSET(final_path_3_txt);
 ASSET(final_path_4_txt);
 ASSET(final_path_5_txt);
 
+
+//blue alliance wall
 void autonomous()
 {    
     //start
@@ -286,13 +292,13 @@ void autonomous()
     pros::delay(600);
 
     //move forward and turn 90
-    chassis.moveToPoint(-45.3, 0, 1000);
+    chassis.moveToPoint(-45.4, 0, 1000);
     chassis.waitUntilDone();
     chassis.turnToHeading(0, 700);
     chassis.waitUntilDone();
 
     //move to the mogo and grasp
-    chassis.moveToPoint(-44.55, -18.5, 2000, {.forwards = false});
+    chassis.moveToPoint(-45.7, -18.5, 2000, {.forwards = false});
     chassis.waitUntilDone();
     mogo_move(true);
     pros::delay(300);
@@ -302,16 +308,16 @@ void autonomous()
     enable_antijam = true;
     chassis.follow(final_path_1_txt, 30, 5000);
     chassis.waitUntilDone();
-    pros::delay(200);
+    pros::delay(500);
     
     //move to the wall stake
-    chassis.moveToPoint(3.1, -47, 2000, {.forwards = false}); //x: 3.85
+    chassis.moveToPoint(2.8, -47, 2000, {.forwards = false}); //x: 3.85
     chassis.waitUntilDone();
     enable_antijam = false;
-    chassis.turnToHeading(180, 800, {.minSpeed = 20});
+    chassis.turnToHeading(180, 600, {.minSpeed = 20});
     ladybrown_move_PID(ladybrown_hold_angle, 0.4, 3);
     chassis.waitUntilDone();
-    chassis.moveToPoint(4.9, -66.5, 2000); //x:4.45, y:67
+    chassis.moveToPoint(4.5, -66.75, 2000); //x:4.45, y:67
     chassis.waitUntilDone();
     pros::delay(650);
 
@@ -329,7 +335,7 @@ void autonomous()
     enable_antijam = true;
     chassis.moveToPoint(-60, -53, 10000, {.maxSpeed = 65});
     chassis.waitUntilDone();
-    pros::delay(500);
+    pros::delay(700);
 
     //take in the final ring
     chassis.moveToPose(-37.5, -74.5, 135, 1100);
@@ -342,7 +348,7 @@ void autonomous()
     pros::delay(200);
     mogo_move(false);
     enable_antijam = false;
-    pros::delay(200);
+    pros::delay(600);
     conveyor.brake();
     intake.brake();
 
@@ -351,7 +357,7 @@ void autonomous()
     chassis.waitUntilDone();
 
     //move to the mobile goal
-    chassis.moveToPoint(-43.5, 10, 10000, {.forwards = false, .minSpeed = 50, .earlyExitRange = 10});
+    chassis.moveToPoint(-43.5, 10, 3000, {.forwards = false, .minSpeed = 50, .earlyExitRange = 10});
     chassis.waitUntilDone();
     chassis.moveToPoint(-43.5, 18, 1000, {.forwards = false, .maxSpeed = 80});
     chassis.waitUntilDone();
@@ -364,165 +370,365 @@ void autonomous()
     //follow path and intake rings
     chassis.turnToHeading(80, 1000);
     chassis.waitUntilDone();
-    chassis.follow(final_path_4_txt, 30, 20000);
+    chassis.follow(final_path_4_txt, 30, 5000);
     chassis.waitUntilDone();
 
     //move to the ladybrown
-    chassis.moveToPoint(6., 38, 10000, {.forwards = false});
+    chassis.moveToPoint(5.15, 38, 4000, {.forwards = false}); //x:5.2
     chassis.waitUntilDone();
     enable_antijam = false;
     chassis.turnToHeading(0, 1000, {.minSpeed = 40});
     ladybrown_move_PID(ladybrown_hold_angle, 0.4, 3);
     chassis.waitUntilDone();
-    chassis.moveToPoint(4.7, 59, 10000); //x:8, y:57.5
+    chassis.moveToPoint(3.85, 59.75, 2000); //x:3.9
     chassis.waitUntilDone();
-    pros::delay(800);
+    pros::delay(700);
 
     //score ladybrown
     intake.brake();
     conveyor.brake();
     ladybrown_move_PID(ladybrown_up_angle, 5, 1);
-    chassis.moveToPoint(7.8, 40, 20000, {.forwards = false});
-    ladybrown_move_PID(ladybrown_down_angle, 5, 1);
+    chassis.moveToPoint(7.8, 39.5, 2000, {.forwards = false});
+    ladybrown_move_PID(ladybrown_down_angle, 4, 1);
     chassis.waitUntilDone();
 
     //intake 3 rings in a row
     intake_move(200);
     conveyor_move(600);
     enable_antijam = true;
-    chassis.moveToPoint(-56, 43, 20000, {.maxSpeed = 65}); //x:45
+    chassis.moveToPoint(-56, 45.25, 5000, {.maxSpeed = 65}); //x:45
     chassis.waitUntilDone();
-    pros::delay(800);
+    pros::delay(1000);
 
     //take in the final ring
     conveyor.brake();
+    enable_antijam = false;
     chassis.moveToPose(-35, 67.5, 45, 1100);
     chassis.waitUntilDone();
 
     //move to the corner
-    //x-32.5, y-16.5
-    chassis.moveToPose(-67.5, 74, 135, 550, {.forwards = false, .minSpeed = 80}); //y:84
+    chassis.moveToPose(-67.5, 80, 135, 700, {.forwards = false, .minSpeed = 80}); //y:84
     chassis.waitUntilDone();
-    enable_antijam = false;
     conveyor_move(-300);
     mogo_move(false);
     pros::delay(200);
     conveyor.brake();
-    chassis.moveToPoint(25, 37, 10000);
-    chassis.waitUntil(10);
-    intake.brake();
+
+    //follow path and move the ring to the ladybrown
+    chassis.moveToPoint(4, 44.5, 3000, {.minSpeed = 80, .earlyExitRange = 12});
+    ladybrown_move_PID(ladybrown_hold_angle, 0.5, 3);
+    chassis.waitUntil(20);
+    conveyor_move(600);
+    chassis.waitUntilDone();
+    chassis.moveToPoint(42, 10, 2000); //(42; 10)
     chassis.waitUntilDone();
 
-
-    /*
-    //go grab the mogo
-    chassis.turnToHeading(97, 1000);
+    //grab the mobile goal
+    chassis.turnToHeading(-40, 1000, {.minSpeed = 40});
     chassis.waitUntilDone();
-    chassis.moveToPoint(-52, 27.5, 3000, {.forwards = false, .maxSpeed = 75});
+    chassis.moveToPoint(52, -6, 3000, {.forwards = false, .maxSpeed = 80}); //(52; -6)
     chassis.waitUntilDone();
     mogo_move(true);
-    pros::delay(100);
+    pros::delay(200);
 
-    //go pure pursuit and intake rings
-    chassis.turnToHeading(55, 700);
+    //move to the alliance wall stake
+
+    //direct
+    // chassis.turnToHeading(90, 1000, {.minSpeed = 40});
+    // chassis.waitUntilDone();
+    // chassis.moveToPose(60.3, -4.5, 90, 1500); //(60.3, -4.5)
+    // conveyor.brake();
+
+    //passive
+    chassis.turnToHeading(90, 1000, {.minSpeed = 40});
+    chassis.waitUntilDone();
+    chassis.moveToPoint(72, -4.5, 2000);
+    chassis.waitUntilDone();
+    conveyor.brake();
+    lemlib::Pose current = chassis.getPose();
+    double distance = 9;
+    ladybrown_move_PID(185, 4, 1);
+    chassis.moveToPose(current.x - sin(distance), current.y - abs(cos(distance)), current.theta, 1000, {.forwards = false});
     chassis.waitUntilDone();
     intake_move(200);
     conveyor_move(600);
-    chassis.follow(final_path_4_txt, 20, 20000);
+    
+    //score on the alliance wall stake
+    
+    chassis.waitUntilDone();
+    chassis.moveToPoint(52, -6, 2000, {.forwards = false});
+    intake_move(200);
+    conveyor_move(600);
     chassis.waitUntilDone();
 
-    //move back to score the wall stake
-    chassis.moveToPoint(4.5, 48.2, 4000, {.forwards = false});
+    //take in the first ring
+    chassis.moveToPoint(30, -28, 3000);
+    ladybrown_move_PID(130, 5, 1);
     chassis.waitUntilDone();
+    pros::delay(200);
+
+    //take in the second ring
+    enable_antijam = true;
+    chassis.turnToHeading(135, 800, {.minSpeed = 40});
+    chassis.waitUntilDone();
+    chassis.moveToPoint(52, -52, 3500); //52, -47
+    chassis.waitUntilDone();
+    pros::delay(200);
+
+    //take in the third ring
+    chassis.moveToPoint(63, -52, 3500); //59, -47
+    chassis.waitUntilDone();
+
+    //sweep the rings out
+    left_doinker_move(true);
+    pros::delay(500);
+    enable_antijam = false;
+    intake.brake();
+    conveyor.brake();
+    chassis.moveToPoint(47, -60, 2000);//x:-60
+    chassis.waitUntilDone();
+    left_doinker_move(false);
+
+    //move to the corner 1
+    chassis.moveToPose(75, -80, -45, 1500, {.forwards = false, .minSpeed = 90});
+    chassis.waitUntilDone();
+    pros::delay(200);
+    mogo_move(false);
+    pros::delay(200);
+
+    //move out of the corner 1
+    chassis.moveToPoint(40, -40, 5000);
+    chassis.waitUntilDone();
+    mogo_move(true);
+
+    //move to the corner 2
+    chassis.moveToPoint(74, 54, 3000, {.forwards = false});
+    ladybrown_move_PID(240, 5, 1);
+    chassis.waitUntilDone();
+
+
+    //move out of the corner 2
+    chassis.moveToPoint(40, 33, 10000);
+    chassis.waitUntilDone();
+    chassis.turnToHeading(45, 800, {.minSpeed = 40});
+    chassis.waitUntilDone();
+    chassis.moveToPose(0, -7, 45, 5000, {.forwards = false, .maxSpeed = 90});
+    chassis.waitUntilDone();
+}
+
+
+
+/*
+void autonomous()
+{    
+    //start
+    chassis.setPose(-60, 0, 90);
+
+    //score the alliance wall stake
+    intake_move(200);
+    conveyor_move(600);
+    pros::delay(600);
+
+    //move forward and turn 90
+    chassis.moveToPoint(-45.4, 0, 1000);
+    chassis.waitUntilDone();
+    chassis.turnToHeading(0, 700);
+    chassis.waitUntilDone();
+
+    //move to the mogo and grasp
+    chassis.moveToPoint(-45.7, -18.5, 2000, {.forwards = false});
+    chassis.waitUntilDone();
+    mogo_move(true);
+    pros::delay(300);
+
+    //follow path and score rings
+    chassis.turnToHeading(113, 700);
+    enable_antijam = true;
+    chassis.follow(final_path_1_txt, 30, 5000);
+    chassis.waitUntilDone();
+    pros::delay(500);
+    
+    //move to the wall stake
+    chassis.moveToPoint(2.8, -47, 2000, {.forwards = false}); //x: 3.85
+    chassis.waitUntilDone();
+    enable_antijam = false;
+    chassis.turnToHeading(180, 600, {.minSpeed = 20});
     ladybrown_move_PID(ladybrown_hold_angle, 0.4, 3);
-    chassis.turnToHeading(0, 800);
     chassis.waitUntilDone();
-    chassis.moveToPoint(5.5, 61, 1000);
+    chassis.moveToPoint(4.5, -66.75, 2000); //x:4.45, y:67
     chassis.waitUntilDone();
-    chassis.turnToHeading(0, 500);
-    pros::delay(700);
-
+    pros::delay(650);
 
     //score ladybrown
     intake.brake();
     conveyor.brake();
-    intake.brake();
-    ladybrown_move_PID(ladybrown_up_angle, 3, 1);
-    pros::delay(1200);
-    ladybrown_move_PID(ladybrown_down_angle, 3, 1);
-    ladybrown.brake();
-    pros::delay(400);
+    ladybrown_move_PID(ladybrown_up_angle, 5, 1);
 
-    //score 3 rings in a row
-    chassis.moveToPoint(3.4, 43, 4000, {.forwards = false});
+    //take in 3 rings in a row
+    chassis.moveToPoint(3, -46, 1000, {.forwards = false});
+    ladybrown_move_PID(ladybrown_down_angle, 4, 1);
     chassis.waitUntilDone();
     intake_move(200);
     conveyor_move(600);
-    chassis.moveToPoint(-58, 52, 10000, {.maxSpeed = 70});
-    intake_move(-200);
-    conveyor_move(-200);
-    chassis.waitUntil(5);
-    intake_move(200);
-    conveyor_move(600);
+    enable_antijam = true;
+    chassis.moveToPoint(-60, -53, 10000, {.maxSpeed = 65});
     chassis.waitUntilDone();
-    pros::delay(500);
+    pros::delay(700);
+
+    //take in the final ring
+    chassis.moveToPose(-37.5, -74.5, 135, 1100);
+    chassis.waitUntilDone();
+    pros::delay(300);
 
     //move to the corner
-    chassis.moveToPose(-60, 72, -45, 1500, {.forwards = false});
+    chassis.moveToPose(-70, -91, 45, 550, {.forwards = false, .minSpeed = 80});
     chassis.waitUntilDone();
-    intake_move(-200);
-    conveyor_move(-200);
-    mogo_move(false);
-    pros::delay(800);
-    intake.brake();
-    conveyor.brake();
-
-    //follow path and store 1 ring
-    intake_move(80);
-    conveyor_move(80);
-    chassis.follow(final_path_5_txt, 20, 10000);
-    chassis.waitUntilDone();
-    intake.brake();
-    conveyor.brake();
-
-    //move backwards to and grab the mobile goal
-    //chassis.setPose(24.7, 10.4, -205.2);
-    chassis.turnToHeading(-43, 1000);
-    chassis.waitUntilDone();
-    chassis.moveToPoint(43, -10, 2000, {.forwards = false, .maxSpeed = 80});
-    chassis.waitUntilDone();
-    mogo_move(true); 
     pros::delay(200);
+    mogo_move(false);
+    enable_antijam = false;
+    pros::delay(600);
+    conveyor.brake();
+    intake.brake();
 
-    //put the ring in and swing the mobile goal
+    //move out of the corner
+    chassis.moveToPoint(-30, -40, 2000);
+    chassis.waitUntilDone();
+
+    //move to the mobile goal
+    chassis.moveToPoint(-43.5, 10, 3000, {.forwards = false, .minSpeed = 50, .earlyExitRange = 10});
+    chassis.waitUntilDone();
+    chassis.moveToPoint(-43.5, 18, 1000, {.forwards = false, .maxSpeed = 80});
+    chassis.waitUntilDone();
+    enable_antijam = true;
     intake_move(200);
     conveyor_move(600);
-    pros::delay(600);
-    chassis.turnToHeading(75, 1000);
-    chassis.waitUntilDone();
-    mogo_move(false);
-
-    //turn and move to the corner
-    chassis.turnToHeading(-30, 1000);
-    chassis.waitUntilDone();
     mogo_move(true);
+    pros::delay(200);
+
+    //follow path and intake rings
+    chassis.turnToHeading(80, 1000);
+    chassis.waitUntilDone();
+    chassis.follow(final_path_4_txt, 30, 5000);
+    chassis.waitUntilDone();
+
+    //move to the ladybrown
+    chassis.moveToPoint(5.15, 38, 4000, {.forwards = false}); //x:5.2
+    chassis.waitUntilDone();
+    enable_antijam = false;
+    chassis.turnToHeading(0, 1000, {.minSpeed = 40});
+    ladybrown_move_PID(ladybrown_hold_angle, 0.4, 3);
+    chassis.waitUntilDone();
+    chassis.moveToPoint(3.85, 59.75, 2000); //x:3.9
+    chassis.waitUntilDone();
+    pros::delay(700);
+
+    //score ladybrown
     intake.brake();
     conveyor.brake();
-    chassis.moveToPoint(75, -90, 2500, {.forwards = false});
+    ladybrown_move_PID(ladybrown_up_angle, 5, 1);
+    chassis.moveToPoint(7.8, 39.5, 2000, {.forwards = false});
+    ladybrown_move_PID(ladybrown_down_angle, 4, 1);
     chassis.waitUntilDone();
 
-    //move to the holding position
-    chassis.moveToPoint(42, -24, 2000);
+    //intake 3 rings in a row
+    intake_move(200);
+    conveyor_move(600);
+    enable_antijam = true;
+    chassis.moveToPoint(-56, 45.25, 5000, {.maxSpeed = 65}); //x:45
     chassis.waitUntilDone();
-    chassis.turnToHeading(-150, 1000);
+    pros::delay(1000);
+
+    //take in the final ring
+    conveyor.brake();
+    enable_antijam = false;
+    chassis.moveToPose(-35, 67.5, 45, 1100);
     chassis.waitUntilDone();
-    chassis.moveToPoint(75, 90, 2500, {.forwards = false});
+
+    //move to the corner
+    chassis.moveToPose(-67.5, 80, 135, 700, {.forwards = false, .minSpeed = 80}); //y:84
     chassis.waitUntilDone();
-    chassis.moveToPoint(45, 45, 2000);
+    conveyor_move(-300);
+    mogo_move(false);
+    pros::delay(200);
+    conveyor.brake();
+
+    //follow path and move the ring to the ladybrown
+    chassis.moveToPoint(4, 44.5, 3000, {.minSpeed = 80, .earlyExitRange = 12});
+    conveyor_move(50);
+    chassis.waitUntil(15);
+    conveyor.brake();
     chassis.waitUntilDone();
-    */
+    chassis.moveToPoint(42, 10, 2000); //(42; 10)
+    chassis.waitUntilDone();
+
+    //grab the mobile goal
+    chassis.turnToHeading(-40, 1000, {.minSpeed = 40});
+    chassis.waitUntilDone();
+    chassis.moveToPoint(52, -6, 3000, {.forwards = false, .maxSpeed = 80}); //(52; -6)
+    chassis.waitUntilDone();
+    mogo_move(true);
+    pros::delay(200);
+    conveyor_move(600);
+    pros::delay(800);
+
+    //take in the first ring
+    chassis.moveToPoint(30, -28, 3000);
+    ladybrown_move_PID(130, 5, 1);
+    chassis.waitUntilDone();
+    pros::delay(200);
+
+    //take in the second ring
+    enable_antijam = true;
+    chassis.turnToHeading(135, 800, {.minSpeed = 40});
+    chassis.waitUntilDone();
+    chassis.moveToPoint(52, -52, 3500); //52, -47
+    chassis.waitUntilDone();
+    pros::delay(200);
+
+    //take in the third ring
+    chassis.moveToPoint(63, -52, 3500); //59, -47
+    chassis.waitUntilDone();
+
+    //sweep the rings out
+    left_doinker_move(true);
+    pros::delay(500);
+    enable_antijam = false;
+    intake.brake();
+    conveyor.brake();
+    chassis.moveToPoint(47, -60, 2000);//x:-60
+    chassis.waitUntilDone();
+    left_doinker_move(false);
+
+    //move to the corner 1
+    chassis.moveToPose(75, -80, -45, 1000, {.forwards = false, .minSpeed = 90});
+    chassis.waitUntilDone();
+    mogo_move(false);
+    pros::delay(200);
+    chassis.moveToPoint(47, -60, 2000);
+    mogo_move(true);
+    chassis.waitUntilDone();
+    chassis.moveToPose(75, -80, -45, 1000, {.forwards = false, .minSpeed = 90});
+    chassis.waitUntilDone();
+
+    //move out of the corner 1
+    chassis.moveToPoint(45, -45, 5000);
+    chassis.waitUntilDone();
+    mogo_move(true);
+
+    //move to the corner 2
+    chassis.moveToPoint(74, 54, 3000, {.forwards = false});
+    ladybrown_move_PID(240, 5, 1);
+    chassis.waitUntilDone();
+
+    //move out of the corner 2
+    chassis.moveToPoint(40, 33, 10000);
+    chassis.waitUntilDone();
+    chassis.turnToHeading(45, 800, {.minSpeed = 40});
+    chassis.waitUntilDone();
+    chassis.moveToPose(0, -7, 45, 5000, {.forwards = false, .maxSpeed = 90});
+    chassis.waitUntilDone();
 }
-
+*/
 
 void opcontrol() 
 {

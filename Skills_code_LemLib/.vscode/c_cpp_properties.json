@@ -4,7 +4,8 @@
       "name": "PROS Project",
       "includePath": [
         "${workspaceFolder}/**",
-        "c:\\Users\\Admin\\Desktop\\GART\\Skills_code_LemLib\\include"
+        "c:\\Users\\Admin\\Desktop\\GART\\Skills_code_LemLib\\include",
+        "c:\\Users\\Admin\\Desktop\\GART\\vex_v5\\Skills_code_LemLib\\include"
       ],
       "defines": [
         "_DEBUG",
@@ -17,7 +18,7 @@
       "intelliSenseMode": "gcc-arm",
       "browse": {
         "path": [
-          "c:\\Users\\Admin\\Desktop\\GART\\Skills_code_LemLib"
+          "c:\\Users\\Admin\\Desktop\\GART\\vex_v5\\Skills_code_LemLib"
         ],
         "limitSymbolsToIncludedHeaders": true,
         "databaseFilename": ""
